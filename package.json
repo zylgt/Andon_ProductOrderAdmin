@@ -1,5 +1,5 @@
 {
-  "name": "litemall-admin",
+  "name": "ProductOrderAdmin",
   "version": "0.1.0",
   "description": "litemall-admin basing on vue-element-admin 3.9.3",
   "author": "linlinjava <linlinjava@163.com>",
@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "local": "cross-env BABEL_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "dev": "cross-env NODE_ENV=production env_config=dep node build/build.js && serve dist",
+    "dev": "npm rebuild node-sass && cross-env NODE_ENV=production env_config=dep node build/build.js && serve dist",
     "prod": "cross-env NODE_ENV=production env_config=prod node build/build.js && serve dist",
     "lint": "eslint --ext .js,.vue src",
     "test": "npm run lint",
