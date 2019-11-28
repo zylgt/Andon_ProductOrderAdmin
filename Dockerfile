@@ -10,4 +10,4 @@ COPY /static /home/service/static
 COPY /index.html /home/service/index.html
 COPY /package.json /home/service/package.json
 
-EXPOSE 9528
+EXPOSE 5000
