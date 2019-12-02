@@ -26,7 +26,7 @@ export function readStorage(data) {
 
 export function updateStorage(data) {
   return request({
-    url: '/storage/api/update',
+    url: '/storage/update',
     method: 'post',
     data
   })
@@ -40,5 +40,5 @@ export function deleteStorage(data) {
   })
 }
 
-const uploadPath = process.env.BASE_API + 'storage/api/create'
+const uploadPath = process.env.BASE_API + '/storage/create'
 export { uploadPath }

@@ -25,15 +25,15 @@
 
       <el-table-column align="center" label="生日" prop="birthday"/>
 
-      <el-table-column align="center" label="用户角色" prop="role">
+      <el-table-column align="center" label="用户等级" prop="userLevel">
         <template slot-scope="scope">
-          <el-tag >{{ levelDic[scope.row.role] }}</el-tag>
+          <el-tag >{{ levelDic[scope.row.userLevel] }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="状态" prop="is_active">
+      <el-table-column align="center" label="状态" prop="status">
         <template slot-scope="scope">
-          <el-tag>{{ statusDic[scope.row.is_active] }}</el-tag>
+          <el-tag>{{ statusDic[scope.row.status] }}</el-tag>
         </template>
       </el-table-column>
 
@@ -66,8 +66,8 @@ export default {
       },
       downloadLoading: false,
       genderDic: ['未知', '男', '女'],
-      levelDic: ['普通用户', '管理员', '仓库', '销售', '代理商'],
-      statusDic: ['禁用', '可用', '注销']
+      levelDic: ['普通用户', 'VIP用户', '高级VIP用户'],
+      statusDic: ['可用', '禁用', '注销']
     }
   },
   created() {
@@ -77,7 +77,6 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        console.log('xxxx', response.data.data)
         this.list = response.data.data.list
         this.total = response.data.data.total
         this.listLoading = false
@@ -95,7 +94,7 @@ export default {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['用户名', '手机号码', '性别', '生日', '状态']
-        const filterVal = ['username', 'mobile', 'gender', 'birthday', 'is_active']
+        const filterVal = ['username', 'mobile', 'gender', 'birthday', 'status']
         excel.export_json_to_excel2(tHeader, this.list, filterVal, '用户信息')
         this.downloadLoading = false
       })

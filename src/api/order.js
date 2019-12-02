@@ -3,7 +3,7 @@ import Qs from 'qs'
 
 export function listOrder(query) {
   return request({
-    url: '/order/api/list',
+    url: '/order/list',
     method: 'get',
     params: query,
     paramsSerializer: function(params) {
