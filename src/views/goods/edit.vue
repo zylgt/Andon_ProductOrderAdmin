@@ -22,15 +22,18 @@
         </el-form-item>
         <el-form-item label="商品图片">
           <el-upload
-            :headers="headers"
             :action="uploadPath"
-            :show-file-list="false"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
             :on-remove="onRemoveUpload"
             :on-change="onUploadChange"
-            :on-success="uploadPicUrl"
+            :limit="1"
+            :file-list="fileList"
             class="avatar-uploader"
-            accept=".jpg,.jpeg,.png,.gif">
-            <img v-if="goods.img_url" :src="goods.img_url" class="avatar">
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.img_url_new" :src="goods.img_url_new" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
@@ -42,10 +45,12 @@
             :headers="headers"
             :on-remove="onDetailRemoveUpload"
             :on-change="onDetailUploadChange"
+            :limit="1"
+            :file-list="fileDetailList"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
-            <img v-if="goods.detail_url" :src="goods.detail_url" class="avatar">
+            <img v-if="goods.detail_url_new" :src="goods.detail_url_new" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
@@ -118,6 +123,8 @@ export default {
       newKeyword: '',
       product_types: [],
       goods: { },
+      fileList: [],
+      fileDetailList: [],
       specVisiable: false,
       specForm: { specification: '', value: '', picUrl: '' },
       productVisiable: false,
@@ -181,6 +188,8 @@ export default {
       const goodsId = this.$route.query.id
       detailGoods(goodsId).then(response => {
         this.goods = response.data.data.goods
+        this.fileList = [{ name: '', url: response.data.data.goods.img_url }]
+        this.fileDetailList = [{ name: '', url: response.data.data.goods.detail_url }]
       })
 
       listCatAndBrand().then(response => {
@@ -194,24 +203,26 @@ export default {
       this.$router.push({ path: '/goods/list' })
     },
     onRemoveUpload() {
-
     },
     onUploadChange(file) {
       console.log('xxxxxxxxxxx', file)
       this.uploadPic = file
     },
     onDetailRemoveUpload() {
-
     },
     onDetailUploadChange(file) {
       console.log('xxxxxxxxxxx', file)
       this.detailPic = file
     },
     handleEdit: function() {
-      const finalGoods = {
-        goods: this.goods
-      }
-      editGoods(finalGoods)
+      const params = this.goods
+      const formData = new FormData()
+      Object.keys(params).forEach((key) => {
+        formData.append(key, params[key])
+      })
+      formData.append('uploadPic', this.uploadPic.raw)
+      formData.append('detailPic', this.detailPic.raw)
+      editGoods(formData)
         .then(response => {
           this.$notify.success({
             title: '成功',
@@ -231,9 +242,6 @@ export default {
       this.$nextTick(_ => {
         this.$refs.newKeywordInput.$refs.input.focus()
       })
-    },
-    uploadPicUrl: function(response) {
-      this.goods.picUrl = response.data.url
     },
     uploadSpecPicUrl: function(response) {
       this.specForm.picUrl = response.data.url

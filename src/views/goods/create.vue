@@ -31,6 +31,7 @@
             :headers="headers"
             :on-remove="onRemoveUpload"
             :on-change="onUploadChange"
+            :limit="1"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
@@ -46,6 +47,7 @@
             :headers="headers"
             :on-remove="onDetailRemoveUpload"
             :on-change="onDetailUploadChange"
+            :limit="1"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
@@ -189,14 +191,12 @@ export default {
 
     },
     onUploadChange(file) {
-      console.log('xxxxxxxxxxx', file)
       this.uploadPic = file
     },
     onDetailRemoveUpload() {
 
     },
     onDetailUploadChange(file) {
-      console.log('xxxxxxxxxxx', file)
       this.detailPic = file
     },
     handlePublish: function() {
