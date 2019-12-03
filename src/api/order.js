@@ -22,7 +22,7 @@ export function detailOrder(id) {
 
 export function shipOrder(data) {
   return request({
-    url: '/order/ship',
+    url: '/order/api/ship',
     method: 'post',
     data
   })

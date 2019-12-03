@@ -4,6 +4,7 @@ RUN mkdir -p /home/service
 WORKDIR /home/service
 
 # COPY /dist /home/service/dist
+COPY /build /home/service/build
 COPY /config /home/service/config
 COPY /node_modules /home/service/node_modules
 COPY /src /home/service/src
