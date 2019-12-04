@@ -5,10 +5,10 @@
       <h3>商品介绍</h3>
       <el-form ref="goods" :rules="rules" :model="goods" label-width="150px">
         <el-form-item label="商品编号" prop="goodsSn">
-          <el-input v-model="goods.goodsSn"/>
+          <el-input v-model.trim="goods.goodsSn"/>
         </el-form-item>
         <el-form-item label="商品名称" prop="name">
-          <el-input v-model="goods.name"/>
+          <el-input v-model.trim="goods.name"/>
         </el-form-item>
         <el-form-item label="所属分类">
           <el-select v-model="goods.product_type">

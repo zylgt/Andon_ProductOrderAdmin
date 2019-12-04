@@ -2,9 +2,31 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/user/list',
+    url: '/user/api/list',
     method: 'get',
     params: query
+  })
+}
+export function createAdmin(data) {
+  return request({
+    url: '/user/api/create',
+    method: 'post',
+    data
+  })
+}
+export function updateAdmin(data) {
+  return request({
+    url: '/user/api/update',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteAdmin(data) {
+  return request({
+    url: '/user/api/delete',
+    method: 'post',
+    data
   })
 }
 
