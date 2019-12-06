@@ -13,7 +13,12 @@
       <el-table-column align="center" label="文件名称" prop="title"/>
 
       <el-table-column align="center" label="说明" prop="description"/>
-      <el-table-column align="center" label="文件路径" prop="url"/>
+      <!-- <el-table-column align="center" label="文件路径" prop="url"/> -->
+      <el-table-column align="center" property="url" label="图片">
+        <template slot-scope="scope">
+          <img :src="scope.row.url" width="40">
+        </template>
+      </el-table-column>
 
       <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">

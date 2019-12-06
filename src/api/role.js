@@ -18,7 +18,7 @@ export function createRole(data) {
 
 export function updateRole(data) {
   return request({
-    url: '/file/update',
+    url: '/file/api/update',
     method: 'post',
     data
   })
@@ -26,7 +26,7 @@ export function updateRole(data) {
 
 export function deleteRole(data) {
   return request({
-    url: '/file/delete',
+    url: '/file/api/delete',
     method: 'post',
     data
   })
