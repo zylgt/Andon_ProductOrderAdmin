@@ -3,7 +3,7 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
-      <el-input v-model="listQuery.username" clearable class="filter-item" style="width: 200px;" placeholder="请输入公告名称"/>
+      <el-input v-model="listQuery.title" clearable class="filter-item" style="width: 200px;" placeholder="请输入公告名称"/>
       <el-button v-permission="['GET /admin/admin/list']" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
       <el-button v-permission="['POST /admin/admin/create']" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
       <!-- <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button> -->
@@ -11,16 +11,11 @@
 
     <!-- 查询结果 -->
     <el-table v-loading="listLoading" :data="list" element-loading-text="正在查询中。。。" border fit highlight-current-row>
-      <el-table-column align="center" label="管理员ID" prop="id" sortable/>
+      <el-table-column align="center" label="公告ID" width="100" prop="id"/>
 
-      <el-table-column align="center" label="管理员名称" prop="username"/>
-
-      <el-table-column align="center" label="管理员头像" prop="avatar">
-        <template slot-scope="scope">
-          <img v-if="scope.row.avatar" :src="scope.row.avatar" width="40">
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
+      <el-table-column align="center" label="公告名称" prop="title"/>
+      <el-table-column align="center" label="公告内容" prop="text"/>
+      <el-table-column align="center" label="操作" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button v-permission="['POST /admin/admin/update']" type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
           <el-button v-permission="['POST /admin/admin/delete']" type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
@@ -33,23 +28,11 @@
     <!-- 添加或修改对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="管理员名称" prop="username">
-          <el-input v-model="dataForm.username"/>
+        <el-form-item label="公告名称" prop="title">
+          <el-input v-model="dataForm.title"/>
         </el-form-item>
-        <el-form-item label="管理员密码" prop="password">
-          <el-input v-model="dataForm.password" type="password" auto-complete="off"/>
-        </el-form-item>
-        <el-form-item label="管理员头像" prop="avatar">
-          <el-upload
-            :headers="headers"
-            :action="uploadPath"
-            :show-file-list="false"
-            :on-success="uploadAvatar"
-            class="avatar-uploader"
-            accept=".jpg,.jpeg,.png,.gif">
-            <img v-if="dataForm.avatar" :src="dataForm.avatar" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"/>
-          </el-upload>
+        <el-form-item label="公告内容" prop="text">
+          <el-input v-model="dataForm.text" type="textarea"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -90,7 +73,6 @@
 
 <script>
 import { listAdmin, createAdmin, updateAdmin, deleteAdmin } from '@/api/admin'
-import { roleOptions } from '@/api/role'
 import { uploadPath } from '@/api/storage'
 import { getToken } from '@/utils/auth'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
@@ -103,18 +85,17 @@ export default {
       uploadPath,
       list: null,
       total: 0,
-      roleOptions: null,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 20,
-        username: undefined,
+        title: undefined,
         sort: 'add_time',
         order: 'desc'
       },
       dataForm: {
         id: undefined,
-        username: undefined,
+        title: undefined,
         password: undefined,
         avatar: undefined
       },
@@ -125,10 +106,10 @@ export default {
         create: '创建'
       },
       rules: {
-        username: [
-          { required: true, message: '管理员名称不能为空', trigger: 'blur' }
+        title: [
+          { required: true, message: '公告名称不能为空', trigger: 'blur' }
         ],
-        password: [{ required: true, message: '密码不能为空', trigger: 'blur' }]
+        text: [{ required: true, message: '公告内容不能为空', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -142,21 +123,8 @@ export default {
   },
   created() {
     this.getList()
-
-    roleOptions()
-      .then(response => {
-        this.roleOptions = response.data.data.list
-      })
   },
   methods: {
-    formatRole(roleId) {
-      for (let i = 0; i < this.roleOptions.length; i++) {
-        if (roleId === this.roleOptions[i].value) {
-          return this.roleOptions[i].label
-        }
-      }
-      return ''
-    },
     getList() {
       this.listLoading = true
       listAdmin(this.listQuery)
@@ -178,7 +146,7 @@ export default {
     resetForm() {
       this.dataForm = {
         id: undefined,
-        username: undefined,
+        title: undefined,
         password: undefined,
         avatar: undefined
       }
@@ -203,7 +171,7 @@ export default {
               this.dialogFormVisible = false
               this.$notify.success({
                 title: '成功',
-                message: '添加管理员成功'
+                message: '添加公告成功'
               })
             })
             .catch(response => {
@@ -238,7 +206,7 @@ export default {
               this.dialogFormVisible = false
               this.$notify.success({
                 title: '成功',
-                message: '更新管理员成功'
+                message: '更新公告成功'
               })
             })
             .catch(response => {
@@ -255,7 +223,7 @@ export default {
         .then(response => {
           this.$notify.success({
             title: '成功',
-            message: '删除管理员成功'
+            message: '删除公告成功'
           })
           const index = this.list.indexOf(row)
           this.list.splice(index, 1)
@@ -270,13 +238,13 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['管理员ID', '管理员名称', '管理员头像']
-        const filterVal = ['id', 'username', 'avatar']
+        const tHeader = ['公告ID', '公告名称', '公告内容']
+        const filterVal = ['id', 'title', 'avatar']
         excel.export_json_to_excel2(
           tHeader,
           this.list,
           filterVal,
-          '管理员信息'
+          '公告信息'
         )
         this.downloadLoading = false
       })

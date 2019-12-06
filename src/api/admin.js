@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function listAdmin(query) {
   return request({
-    url: '/admin/list',
+    url: '/notice/api/list',
     method: 'get',
     params: query
   })
@@ -10,23 +10,15 @@ export function listAdmin(query) {
 
 export function createAdmin(data) {
   return request({
-    url: '/admin/create',
+    url: '/notice/api/create',
     method: 'post',
-    data
-  })
-}
-
-export function readminAdmin(data) {
-  return request({
-    url: '/admin/readmin',
-    method: 'get',
     data
   })
 }
 
 export function updateAdmin(data) {
   return request({
-    url: '/admin/update',
+    url: '/notice/api/update',
     method: 'post',
     data
   })
@@ -34,7 +26,7 @@ export function updateAdmin(data) {
 
 export function deleteAdmin(data) {
   return request({
-    url: '/admin/delete',
+    url: '/notice/api/delete',
     method: 'post',
     data
   })

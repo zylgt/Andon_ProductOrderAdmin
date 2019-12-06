@@ -6,7 +6,7 @@
   "scripts": {
     "local": "cross-env BABEL_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "build:dev": "npm rebuild node-sass && cross-env NODE_ENV=production env_config=dep node build/build.js && serve dist",
-    "build:prod": "cross-env NODE_ENV=production env_config=prod node build/build.js && serve dist",
+    "build:prod": "npm rebuild node-sass && cross-env NODE_ENV=production env_config=prod node build/build.js && serve dist",
     "lint": "eslint --ext .js,.vue src",
     "test": "npm run lint",
     "precommit": "lint-staged",

@@ -20,18 +20,7 @@
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">商品数量</div>
-            <count-to :start-val="0" :end-val="goodsTotal" :duration="3000" class="card-panel-num"/>
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <div class="card-panel" @click="handleSetLineChartData('purchases')">
-          <div class="card-panel-icon-wrapper icon-money">
-            <svg-icon icon-class="message" class-name="card-panel-icon" />
-          </div>
-          <div class="card-panel-description">
-            <div class="card-panel-text">货品数量</div>
-            <count-to :start-val="0" :end-val="productTotal" :duration="3200" class="card-panel-num"/>
+            <count-to :start-val="0" :end-val="productTotal" :duration="3000" class="card-panel-num"/>
           </div>
         </div>
       </el-col>
@@ -43,6 +32,17 @@
           <div class="card-panel-description">
             <div class="card-panel-text">订单数量</div>
             <count-to :start-val="0" :end-val="orderTotal" :duration="3600" class="card-panel-num"/>
+          </div>
+        </div>
+      </el-col>
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel" @click="handleSetLineChartData('purchases')">
+          <div class="card-panel-icon-wrapper icon-money">
+            <svg-icon icon-class="message" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">文件数量</div>
+            <count-to :start-val="0" :end-val="fileTotal" :duration="3200" class="card-panel-num"/>
           </div>
         </div>
       </el-col>
@@ -61,16 +61,16 @@ export default {
   data() {
     return {
       userTotal: 0,
-      goodsTotal: 0,
       productTotal: 0,
+      fileTotal: 0,
       orderTotal: 0
     }
   },
   created() {
     info().then(response => {
       this.userTotal = response.data.data.userTotal
-      this.goodsTotal = response.data.data.goodsTotal
       this.productTotal = response.data.data.productTotal
+      this.fileTotal = response.data.data.fileTotal
       this.orderTotal = response.data.data.orderTotal
     })
   },

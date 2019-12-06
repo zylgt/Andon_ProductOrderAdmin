@@ -3,22 +3,22 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
-      <el-input v-model="listQuery.name" clearable class="filter-item" style="width: 200px;" placeholder="请输入角色名称"/>
+      <el-input v-model="listQuery.title" clearable class="filter-item" style="width: 200px;" placeholder="请输入文件名称"/>
       <el-button v-permission="['GET /admin/role/list']" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
       <el-button v-permission="['POST /admin/role/create']" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
     </div>
 
     <!-- 查询结果 -->
     <el-table v-loading="listLoading" :data="list" element-loading-text="正在查询中。。。" border fit highlight-current-row>
-      <el-table-column align="center" label="角色名称" prop="name" sortable/>
+      <el-table-column align="center" label="文件名称" prop="title"/>
 
-      <el-table-column align="center" label="说明" prop="desc"/>
+      <el-table-column align="center" label="说明" prop="description"/>
+      <el-table-column align="center" label="文件路径" prop="url"/>
 
       <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button v-permission="['POST /admin/role/update']" type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
           <el-button v-permission="['POST /admin/role/delete']" type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
-          <el-button v-permission="['GET /admin/role/permissions']" type="primary" size="mini" @click="handlePermission(scope.row)">授权</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -28,11 +28,27 @@
     <!-- 添加或修改对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="角色名称" prop="name">
-          <el-input v-model="dataForm.name"/>
+        <el-form-item label="文件名称" prop="title">
+          <el-input v-model="dataForm.title"/>
         </el-form-item>
-        <el-form-item label="说明" prop="desc">
-          <el-input v-model="dataForm.desc"/>
+        <el-form-item label="文件">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :on-remove="onRemoveUpload"
+            :on-change="onUploadChange"
+            :limit="1"
+            :file-list="fileList"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="picUrl" :src="picUrl" width="100" height="100" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="说明" prop="description">
+          <el-input v-model="dataForm.description"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -66,27 +82,33 @@
 </template>
 
 <script>
-import { listRole, createRole, updateRole, deleteRole, getPermission, updatePermission } from '@/api/role'
+import { listRole, createRole, updateRole, deleteRole, updatePermission } from '@/api/role'
+import { uploadPath } from '@/api/storage'
 import Pagination from '@/components/Pagination'
 export default {
   name: 'Role',
   components: { Pagination },
   data() {
     return {
+      uploadPath,
       list: null,
       total: 0,
+      uploadPic: [],
+      fileList: [],
+      picUrl: '',
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 20,
-        name: undefined,
+        title: undefined,
         sort: 'add_time',
-        order: 'desc'
+        order: 'description'
       },
       dataForm: {
         id: undefined,
-        name: undefined,
-        desc: undefined
+        title: undefined,
+        description: undefined,
+        url: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -95,8 +117,8 @@ export default {
         create: '创建'
       },
       rules: {
-        name: [
-          { required: true, message: '角色名称不能为空', trigger: 'blur' }
+        title: [
+          { required: true, message: '文件名称不能为空', trigger: 'blur' }
         ]
       },
       permissionDialogFormVisible: false,
@@ -126,6 +148,12 @@ export default {
           this.listLoading = false
         })
     },
+    onRemoveUpload() {
+
+    },
+    onUploadChange(file) {
+      this.uploadPic = file
+    },
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
@@ -133,8 +161,8 @@ export default {
     resetForm() {
       this.dataForm = {
         id: undefined,
-        name: undefined,
-        desc: undefined
+        title: undefined,
+        description: undefined
       }
     },
     handleCreate() {
@@ -148,13 +176,18 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          createRole(this.dataForm)
+          const formData = new FormData()
+          Object.keys(this.dataForm).forEach((key) => {
+            formData.append(key, this.dataForm[key])
+          })
+          formData.append('uploadPic', this.uploadPic.raw)
+          createRole(formData)
             .then(response => {
               this.list.unshift(response.data.data)
               this.dialogFormVisible = false
               this.$notify.success({
                 title: '成功',
-                message: '添加角色成功'
+                message: '添加文件成功'
               })
             })
             .catch(response => {
@@ -168,6 +201,7 @@ export default {
     },
     handleUpdate(row) {
       this.dataForm = Object.assign({}, row)
+      this.fileList = [{ name: '', url: row.url }]
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -177,11 +211,17 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          updateRole(this.dataForm)
-            .then(() => {
+          const formData = new FormData()
+          Object.keys(this.dataForm).forEach((key) => {
+            formData.append(key, this.dataForm[key])
+          })
+          formData.append('uploadPic', this.uploadPic.raw)
+          updateRole(formData)
+            .then((response) => {
               for (const v of this.list) {
                 if (v.id === this.dataForm.id) {
                   const index = this.list.indexOf(v)
+                  this.dataForm.url = response.data.data.url
                   this.list.splice(index, 1, this.dataForm)
                   break
                 }
@@ -216,15 +256,6 @@ export default {
             title: '失败',
             message: response.data.errmsg
           })
-        })
-    },
-    handlePermission(row) {
-      this.permissionDialogFormVisible = true
-      this.permissionForm.roleId = row.id
-      getPermission({ roleId: row.id })
-        .then(response => {
-          this.systemPermissions = response.data.data.systemPermissions
-          this.assignedPermissions = response.data.data.assignedPermissions
         })
     },
     updatePermission() {

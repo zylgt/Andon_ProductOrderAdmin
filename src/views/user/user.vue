@@ -23,6 +23,8 @@
           <el-tag >{{ genderDic[scope.row.gender] }}</el-tag>
         </template>
       </el-table-column> -->
+      <el-table-column align="center" label="收货人姓名" prop="receiver_name"/>
+      <el-table-column align="center" label="收货人电话" prop="receiver_mobile"/>
       <el-table-column align="center" label="地址" prop="address"/>
       <el-table-column align="center" label="代理商号" prop="agent_no"/>
       <el-table-column align="center" label="用户角色" prop="role">
@@ -31,11 +33,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="状态" prop="is_active">
+      <!-- <el-table-column align="center" label="状态" prop="is_active">
         <template slot-scope="scope">
           <el-tag>{{ statusDic[scope.row.is_active] }}</el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" width="150px" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button v-permission="['POST /admin/admin/update']" type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
@@ -50,7 +52,7 @@
     <!-- 添加或修改对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="名称" prop="username">
+        <el-form-item label="用户名" prop="username">
           <el-input v-model.trim="dataForm.username"/>
         </el-form-item>
         <el-form-item label="密码" prop="password">
@@ -73,7 +75,13 @@
         <el-form-item label="联系电话" prop="mobile">
           <el-input v-model="dataForm.mobile"/>
         </el-form-item>
-        <el-form-item label="地址" prop="address">
+        <el-form-item label="收货人姓名" prop="receiver_name">
+          <el-input v-model="dataForm.receiver_name"/>
+        </el-form-item>
+        <el-form-item label="收货人电话" prop="receiver_mobile">
+          <el-input v-model="dataForm.receiver_mobile"/>
+        </el-form-item>
+        <el-form-item label="收货地址" prop="address">
           <el-input v-model="dataForm.address"/>
         </el-form-item>
         <el-form-item label="代理商号" prop="agent_no">
@@ -114,6 +122,8 @@ export default {
         username: undefined,
         password: undefined,
         mobile: undefined,
+        receiver_name: undefined,
+        receiver_mobile: undefined,
         address: undefined,
         agent_no: undefined,
         avatar: undefined,

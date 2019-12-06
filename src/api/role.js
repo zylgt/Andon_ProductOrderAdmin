@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function listRole(query) {
   return request({
-    url: '/role/list',
+    url: '/file/api/list',
     method: 'get',
     params: query
   })
@@ -10,23 +10,15 @@ export function listRole(query) {
 
 export function createRole(data) {
   return request({
-    url: '/role/create',
+    url: '/file/api/create',
     method: 'post',
-    data
-  })
-}
-
-export function readRole(data) {
-  return request({
-    url: '/role/read',
-    method: 'get',
     data
   })
 }
 
 export function updateRole(data) {
   return request({
-    url: '/role/update',
+    url: '/file/update',
     method: 'post',
     data
   })
@@ -34,7 +26,7 @@ export function updateRole(data) {
 
 export function deleteRole(data) {
   return request({
-    url: '/role/delete',
+    url: '/file/delete',
     method: 'post',
     data
   })
