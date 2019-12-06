@@ -15,9 +15,30 @@
     <!-- 查询结果 -->
     <el-table v-loading="listLoading" :data="list" element-loading-text="正在查询中。。。" border fit highlight-current-row>
 
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" class="table-expand">
+            <el-form-item label="商品信息">
+              <el-table :data="props.row.details" border fit highlight-current-row>
+                <el-table-column align="center" label="商品名称" prop="name" />
+                <el-table-column align="center" label="商品编号" prop="goodsSn" />
+                <!-- <el-table-column align="center" label="货品规格" prop="specifications" /> -->
+                <el-table-column align="center" label="货品价格" prop="price" />
+                <el-table-column align="center" label="货品数量" prop="count" />
+                <el-table-column align="center" label="货品图片" prop="img_url">
+                  <template slot-scope="scope">
+                    <img :src="scope.row.img_url" width="40">
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" min-width="100" label="订单编号" prop="order_no"/>
 
-      <el-table-column align="center" label="用户ID" prop="user_id"/>
+      <el-table-column align="center" label="代理商名称" prop="username"/>
 
       <el-table-column align="center" label="订单状态" prop="status">
         <template slot-scope="scope">
@@ -27,15 +48,17 @@
 
       <el-table-column align="center" label="订单金额" prop="total_price"/>
 
-      <el-table-column align="center" min-width="120" label="创建时间" prop="create_time"/>
+      <el-table-column align="center" min-width="120" label="下单时间" prop="create_time"/>
+      <el-table-column align="center" min-width="120" label="发货时间" prop="send_time"/>
 
       <el-table-column align="center" label="物流单号" prop="logistics_no"/>
 
       <el-table-column align="center" label="物流渠道" prop="logistics_company_name"/>
 
-      <el-table-column align="center" label="操作" width="80" class-name="small-padding fixed-width">
+      <el-table-column align="center" label="操作" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <!-- <el-button v-permission="['GET /admin/order/detail']" type="primary" size="mini" @click="handleDetail(scope.row)">详情</el-button> -->
+          <el-button type="primary" size="mini" @click="handleShip(scope.row)">物流</el-button>
           <el-button type="primary" size="mini" @click="handleShip(scope.row)">更新</el-button>
         </template>
       </el-table-column>
@@ -103,15 +126,15 @@
     </el-dialog>
 
     <!-- 发货对话框 -->
-    <el-dialog :visible.sync="shipDialogVisible" title="物流更新">
+    <el-dialog :visible.sync="shipDialogVisible" title="更新">
       <el-form ref="shipForm" :model="shipForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="快递公司" prop="logistics_company_name">
+        <el-form-item v-if="shipForm.status==2" label="快递公司" prop="logistics_company_name">
           <el-input v-model="shipForm.logistics_company_name"/>
         </el-form-item>
-        <el-form-item label="快递编号" prop="logistics_no">
+        <el-form-item v-if="shipForm.status==2" label="快递编号" prop="logistics_no">
           <el-input v-model="shipForm.logistics_no"/>
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item v-if="shipForm.status!=2" label="状态">
           <el-select v-model="shipForm.status">
             <el-option v-for="item in statusList" :key="item.id" :label="item.text" :value="item.id"/>
           </el-select>
@@ -231,6 +254,7 @@ export default {
       this.shipForm.orderId = row.id
       this.shipForm.logistics_company_name = row.logistics_company_name
       this.shipForm.logistics_no = row.logistics_no
+      this.shipForm.status = row.status
 
       this.shipDialogVisible = true
       this.$nextTick(() => {

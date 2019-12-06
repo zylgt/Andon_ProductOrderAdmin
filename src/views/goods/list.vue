@@ -42,7 +42,7 @@
 
       <el-table-column align="center" min-width="100" label="名称" prop="name"/>
 
-      <el-table-column align="center" property="iconUrl" label="图片">
+      <el-table-column align="center" property="iconUrl" label="商品头图">
         <template slot-scope="scope">
           <img :src="scope.row.img_url" width="40">
         </template>

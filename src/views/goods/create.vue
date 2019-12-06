@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
 
-    <el-card class="box-card">
+    <el-card v-loading="listLoading" element-loading-text="正在新增中。。。" class="box-card">
       <h3>商品介绍</h3>
       <el-form ref="goods" :rules="rules" :model="goods" label-width="150px">
         <el-form-item label="商品编号" prop="goodsSn">
@@ -23,7 +23,7 @@
         <el-form-item label="库存" prop="stock">
           <el-input v-model="goods.stock" placeholder="0"/>
         </el-form-item>
-        <el-form-item label="商品图片">
+        <el-form-item label="商品头图">
           <el-upload
             :action="uploadPath"
             :show-file-list="true"
@@ -39,7 +39,7 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
-        <el-form-item label="详细图">
+        <el-form-item label="说明书图">
           <el-upload
             :action="uploadPath"
             :show-file-list="true"
@@ -52,6 +52,38 @@
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
             <img v-if="goods.detail_url" :src="goods.detail_url" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="包装图">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
+            :on-remove="onPackageRemoveUpload"
+            :on-change="onPackageUploadChange"
+            :limit="1"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.package_url" :src="goods.package_url" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="轮播图">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
+            :on-remove="onCarouselRemoveUpload"
+            :on-change="onCarouselUploadChange"
+            :limit="3"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.carousel_url" :src="goods.carousel_url" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
@@ -131,6 +163,9 @@ export default {
       uploadPath,
       uploadPic: [],
       detailPic: [],
+      packagePic: [],
+      carouselPic: [],
+      listLoading: false,
       newKeywordVisible: false,
       newKeyword: '',
       keywords: [],
@@ -199,25 +234,49 @@ export default {
     onDetailUploadChange(file) {
       this.detailPic = file
     },
+    onPackageRemoveUpload() {
+
+    },
+    onPackageUploadChange(file) {
+      this.packagePic = file
+    },
+    onCarouselRemoveUpload() {
+
+    },
+    onCarouselUploadChange(file) {
+      this.carouselPic.push(file.raw)
+    },
     handlePublish: function() {
-      const params = this.goods
-      const formData = new FormData()
-      Object.keys(params).forEach((key) => {
-        formData.append(key, params[key])
-      })
-      formData.append('uploadPic', this.uploadPic.raw)
-      formData.append('detailPic', this.detailPic.raw)
-      publishGoods(formData).then(response => {
-        this.$notify.success({
-          title: '成功',
-          message: '创建成功'
-        })
-        this.$router.push({ path: '/goods/list' })
-      }).catch(response => {
-        MessageBox.alert('业务错误：' + response.data.errmsg, '警告', {
-          confirmButtonText: '确定',
-          type: 'error'
-        })
+      this.$refs['goods'].validate(valid => {
+        if (valid) {
+          this.listLoading = true
+          const params = this.goods
+          const formData = new FormData()
+          Object.keys(params).forEach((key) => {
+            formData.append(key, params[key])
+          })
+          console.log('this.carouselPic', this.carouselPic)
+          formData.append('uploadPic', this.uploadPic.raw)
+          formData.append('detailPic', this.detailPic.raw)
+          formData.append('packagePic', this.packagePic.raw)
+          formData.append('carouselPic1', this.carouselPic[0])
+          formData.append('carouselPic2', this.carouselPic[1])
+          formData.append('carouselPic3', this.carouselPic[2])
+          publishGoods(formData).then(response => {
+            this.listLoading = false
+            this.$notify.success({
+              title: '成功',
+              message: '创建成功'
+            })
+            this.$router.push({ path: '/goods/list' })
+          }).catch(response => {
+            this.listLoading = false
+            MessageBox.alert('业务错误：' + response.data.errmsg, '警告', {
+              confirmButtonText: '确定',
+              type: 'error'
+            })
+          })
+        }
       })
     },
     handleClose(tag) {

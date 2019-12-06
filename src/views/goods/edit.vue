@@ -20,7 +20,7 @@
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="商品图片">
+        <el-form-item label="商品头图">
           <el-upload
             :action="uploadPath"
             :show-file-list="true"
@@ -37,7 +37,7 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
-        <el-form-item label="详细图">
+        <el-form-item label="说明书图">
           <el-upload
             :action="uploadPath"
             :show-file-list="true"
@@ -51,6 +51,40 @@
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
             <img v-if="goods.detail_url_new" :src="goods.detail_url_new" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="包装图">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
+            :on-remove="onPackageRemoveUpload"
+            :on-change="onPackageUploadChange"
+            :limit="1"
+            :file-list="filePackageList"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.package_url_new" :src="goods.package_url_new" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="轮播图">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
+            :on-remove="onCarouselRemoveUpload"
+            :on-change="onCarouselUploadChange"
+            :limit="3"
+            :file-list="fileCarouselList"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.carousel_url_new" :src="goods.carousel_url_new" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
@@ -119,12 +153,16 @@ export default {
       uploadPath,
       uploadPic: [],
       detailPic: [],
+      packagePic: [],
+      carouselPic: [],
       newKeywordVisible: false,
       newKeyword: '',
       product_types: [],
       goods: { },
       fileList: [],
       fileDetailList: [],
+      filePackageList: [],
+      fileCarouselList: [],
       specVisiable: false,
       specForm: { specification: '', value: '', picUrl: '' },
       productVisiable: false,
@@ -188,8 +226,14 @@ export default {
       const goodsId = this.$route.query.id
       detailGoods(goodsId).then(response => {
         this.goods = response.data.data.goods
-        this.fileList = [{ name: '', url: response.data.data.goods.img_url }]
-        this.fileDetailList = [{ name: '', url: response.data.data.goods.detail_url }]
+        this.fileList = [{ name: 'fileList', url: response.data.data.goods.img_url }]
+        this.fileDetailList = [{ name: 'fileDetailList', url: response.data.data.goods.detail_url }]
+        this.filePackageList = [{ name: 'filePackageList', url: response.data.data.goods.package_url }]
+        this.fileCarouselList = [
+          { name: 'fileCarouselList1', url: response.data.data.goods.carousel_url_1 },
+          { name: 'fileCarouselList2', url: response.data.data.goods.carousel_url_2 },
+          { name: 'fileCarouselList3', url: response.data.data.goods.carousel_url_3 }
+        ]
       })
 
       listCatAndBrand().then(response => {
@@ -214,6 +258,18 @@ export default {
       console.log('xxxxxxxxxxx', file)
       this.detailPic = file
     },
+    onPackageRemoveUpload() {
+
+    },
+    onPackageUploadChange(file) {
+      this.packagePic = file
+    },
+    onCarouselRemoveUpload() {
+
+    },
+    onCarouselUploadChange(file) {
+      this.carouselPic.push(file.raw)
+    },
     handleEdit: function() {
       const params = this.goods
       const formData = new FormData()
@@ -222,6 +278,10 @@ export default {
       })
       formData.append('uploadPic', this.uploadPic.raw)
       formData.append('detailPic', this.detailPic.raw)
+      formData.append('packagePic', this.packagePic.raw)
+      formData.append('carouselPic1', this.carouselPic[0])
+      formData.append('carouselPic2', this.carouselPic[1])
+      formData.append('carouselPic3', this.carouselPic[2])
       editGoods(formData)
         .then(response => {
           this.$notify.success({
