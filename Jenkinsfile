@@ -25,12 +25,12 @@ node {
             echo 'project is not exists'
             sh 'cd ' + projectName + ' && git pull'
         }
-        if(fileExists(FilePathPrd + 'prod.env.js')){
-            echo 'prd file is exists'
-            sh 'rm ' + FilePathPrd + prdConfFile
-        }
-        echo 'copy prd file'
-        sh 'cp ' + prdConfFilePath + ' ' + FilePathPrd
+        // if(fileExists(FilePathPrd + 'prod.env.js')){
+        //     echo 'prd file is exists'
+        //     sh 'rm ' + FilePathPrd + prdConfFile
+        // }
+        // echo 'copy prd file'
+        // sh 'cp ' + prdConfFilePath + ' ' + FilePathPrd
     }
     stage('INSTALL'){
         echo 'The INSTALL stage'
