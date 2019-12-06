@@ -27,6 +27,13 @@ export function shipOrder(data) {
     data
   })
 }
+export function checkOrder(data) {
+  return request({
+    url: '/order/api/check',
+    method: 'post',
+    data
+  })
+}
 
 export function refundOrder(data) {
   return request({
