@@ -5,10 +5,10 @@
       <h3>商品介绍</h3>
       <el-form ref="goods" :rules="rules" :model="goods" label-width="150px">
         <el-form-item label="商品编号" prop="goodsSn">
-          <el-input v-model="goods.goodsSn"/>
+          <el-input v-model="goods.goodsSn" oninput="if(value.length>15)value=value.slice(0,15)"/>
         </el-form-item>
         <el-form-item label="商品名称" prop="name">
-          <el-input v-model="goods.name"/>
+          <el-input v-model="goods.name" oninput="if(value.length>15)value=value.slice(0,15)"/>
         </el-form-item>
         <el-form-item label="所属分类">
           <el-select v-model="goods.product_type_id">
@@ -19,6 +19,9 @@
           <el-input v-model="goods.price" placeholder="0.00">
             <template slot="append">元</template>
           </el-input>
+        </el-form-item>
+        <el-form-item label="库存" prop="stock">
+          <el-input v-model="goods.stock" placeholder="0"/>
         </el-form-item>
         <el-form-item label="商品头图">
           <el-upload
@@ -123,7 +126,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="商品简介">
-          <el-input v-model="goods.description"/>
+          <el-input v-model="goods.description" type="textarea" oninput="if(value.length>500)value=value.slice(0,500)"/>
         </el-form-item>
       </el-form>
     </el-card>
