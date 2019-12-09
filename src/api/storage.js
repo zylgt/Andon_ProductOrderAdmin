@@ -10,7 +10,7 @@ export function listStorage(query) {
 
 export function createStorage(data) {
   return request({
-    url: '/storage/create',
+    url: '/storage/api/create',
     method: 'post',
     data
   })

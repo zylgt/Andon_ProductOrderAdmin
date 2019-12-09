@@ -51,7 +51,7 @@
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
-            <img v-if="goods.detail_url" :src="goods.detail_url" class="avatar">
+            <img v-if="goods.detail_url_new" :src="goods.detail_url_new" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
@@ -67,23 +67,55 @@
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
-            <img v-if="goods.package_url" :src="goods.package_url" class="avatar">
+            <img v-if="goods.package_url_new" :src="goods.package_url_new" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
-        <el-form-item label="轮播图">
+        <el-form-item label="轮播图一">
           <el-upload
             :action="uploadPath"
             :show-file-list="true"
             :auto-upload="false"
             :headers="headers"
-            :on-remove="onCarouselRemoveUpload"
-            :on-change="onCarouselUploadChange"
-            :limit="3"
+            :on-remove="onCarouselRemoveUpload1"
+            :on-change="onCarouselUploadChange1"
+            :limit="1"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
-            <img v-if="goods.carousel_url" :src="goods.carousel_url" class="avatar">
+            <img v-if="goods.carousel_url_1_new" :src="goods.carousel_url_1_new" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="轮播图二">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
+            :on-remove="onCarouselRemoveUpload2"
+            :on-change="onCarouselUploadChange2"
+            :limit="1"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.carousel_url_2_new" :src="goods.carousel_url_2_new" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="轮播图三">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
+            :on-remove="onCarouselRemoveUpload3"
+            :on-change="onCarouselUploadChange3"
+            :limit="1"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.carousel_url_3_new" :src="goods.carousel_url_3_new" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
@@ -186,16 +218,7 @@ export default {
         language: 'zh_CN',
         convert_urls: false,
         plugins: ['advlist anchor autolink autosave code codesample colorpicker colorpicker contextmenu directionality emoticons fullscreen hr image imagetools importcss insertdatetime link lists media nonbreaking noneditable pagebreak paste preview print save searchreplace spellchecker tabfocus table template textcolor textpattern visualblocks visualchars wordcount'],
-        toolbar: ['searchreplace bold italic underline strikethrough alignleft aligncenter alignright outdent indent  blockquote undo redo removeformat subscript superscript code codesample', 'hr bullist numlist link image charmap preview anchor pagebreak insertdatetime media table emoticons forecolor backcolor fullscreen'],
-        images_upload_handler: function(blobInfo, success, failure) {
-          const formData = new FormData()
-          formData.append('file', blobInfo.blob())
-          createStorage(formData).then(res => {
-            success(res.data.data.url)
-          }).catch(() => {
-            failure('上传失败，请重新上传')
-          })
-        }
+        toolbar: ['searchreplace bold italic underline strikethrough alignleft aligncenter alignright outdent indent  blockquote undo redo removeformat subscript superscript code codesample', 'hr bullist numlist link image charmap preview anchor pagebreak insertdatetime media table emoticons forecolor backcolor fullscreen']
       }
     }
   },
@@ -222,47 +245,58 @@ export default {
     handleCancel: function() {
       this.$router.push({ path: '/goods/goods' })
     },
+    uploadFileNow(file, name) {
+      const formData = new FormData()
+      formData.append(name, file)
+      createStorage(formData).then(res => {
+        console.log('res.data.data.url', res.data.data.url)
+        this.goods[name] = res.data.data.url
+      }).catch(() => {
+        console.log('上传失败，请重新上传')
+      })
+    },
     onRemoveUpload() {
 
     },
     onUploadChange(file) {
-      this.uploadPic = file
+      this.uploadFileNow(file.raw, 'img_url')
     },
     onDetailRemoveUpload() {
 
     },
     onDetailUploadChange(file) {
-      this.detailPic = file
+      this.uploadFileNow(file.raw, 'detail_url')
     },
     onPackageRemoveUpload() {
 
     },
     onPackageUploadChange(file) {
-      this.packagePic = file
+      this.uploadFileNow(file.raw, 'package_url')
     },
-    onCarouselRemoveUpload() {
+    onCarouselRemoveUpload1() {
 
     },
-    onCarouselUploadChange(file) {
-      this.carouselPic.push(file.raw)
+    onCarouselUploadChange1(file) {
+      this.uploadFileNow(file.raw, 'carousel_url_1')
+    },
+    onCarouselRemoveUpload2() {
+
+    },
+    onCarouselUploadChange2(file) {
+      this.uploadFileNow(file.raw, 'carousel_url_2')
+    },
+    onCarouselRemoveUpload3() {
+
+    },
+    onCarouselUploadChange3(file) {
+      this.uploadFileNow(file.raw, 'carousel_url_3')
     },
     handlePublish: function() {
       this.$refs['goods'].validate(valid => {
         if (valid) {
           this.listLoading = true
           const params = this.goods
-          const formData = new FormData()
-          Object.keys(params).forEach((key) => {
-            formData.append(key, params[key])
-          })
-          console.log('this.carouselPic', this.carouselPic)
-          formData.append('uploadPic', this.uploadPic.raw)
-          formData.append('detailPic', this.detailPic.raw)
-          formData.append('packagePic', this.packagePic.raw)
-          formData.append('carouselPic1', this.carouselPic[0])
-          formData.append('carouselPic2', this.carouselPic[1])
-          formData.append('carouselPic3', this.carouselPic[2])
-          publishGoods(formData).then(response => {
+          publishGoods(params).then(response => {
             this.listLoading = false
             this.$notify.success({
               title: '成功',

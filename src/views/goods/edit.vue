@@ -71,20 +71,54 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
-        <el-form-item label="轮播图">
+        <el-form-item label="轮播图一">
           <el-upload
             :action="uploadPath"
             :show-file-list="true"
             :auto-upload="false"
             :headers="headers"
-            :on-remove="onCarouselRemoveUpload"
-            :on-change="onCarouselUploadChange"
-            :limit="3"
-            :file-list="fileCarouselList"
+            :on-remove="onCarouselRemoveUpload1"
+            :on-change="onCarouselUploadChange1"
+            :limit="1"
+            :file-list="fileCarouselList1"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
-            <img v-if="goods.carousel_url_new" :src="goods.carousel_url_new" class="avatar">
+            <img v-if="goods.carousel_url_1_new" :src="goods.carousel_url_1_new" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="轮播图二">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
+            :on-remove="onCarouselRemoveUpload2"
+            :on-change="onCarouselUploadChange2"
+            :limit="1"
+            :file-list="fileCarouselList2"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.carousel_url_2_new" :src="goods.carousel_url_2_new" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="轮播图三">
+          <el-upload
+            :action="uploadPath"
+            :show-file-list="true"
+            :auto-upload="false"
+            :headers="headers"
+            :on-remove="onCarouselRemoveUpload3"
+            :on-change="onCarouselUploadChange3"
+            :limit="1"
+            :file-list="fileCarouselList3"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
+            <img v-if="goods.carousel_url_3_new" :src="goods.carousel_url_3_new" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
@@ -162,7 +196,9 @@ export default {
       fileList: [],
       fileDetailList: [],
       filePackageList: [],
-      fileCarouselList: [],
+      fileCarouselList1: [],
+      fileCarouselList2: [],
+      fileCarouselList3: [],
       specVisiable: false,
       specForm: { specification: '', value: '', picUrl: '' },
       productVisiable: false,
@@ -229,11 +265,9 @@ export default {
         this.fileList = [{ name: 'fileList', url: response.data.data.goods.img_url }]
         this.fileDetailList = [{ name: 'fileDetailList', url: response.data.data.goods.detail_url }]
         this.filePackageList = [{ name: 'filePackageList', url: response.data.data.goods.package_url }]
-        this.fileCarouselList = [
-          { name: 'fileCarouselList1', url: response.data.data.goods.carousel_url_1 },
-          { name: 'fileCarouselList2', url: response.data.data.goods.carousel_url_2 },
-          { name: 'fileCarouselList3', url: response.data.data.goods.carousel_url_3 }
-        ]
+        this.fileCarouselList1 = [{ name: 'fileCarouselList1', url: response.data.data.goods.carousel_url_1 }]
+        this.fileCarouselList2 = [{ name: 'fileCarouselList2', url: response.data.data.goods.carousel_url_2 }]
+        this.fileCarouselList3 = [{ name: 'fileCarouselList3', url: response.data.data.goods.carousel_url_3 }]
       })
 
       listCatAndBrand().then(response => {
@@ -246,43 +280,55 @@ export default {
     handleCancel: function() {
       this.$router.push({ path: '/goods/list' })
     },
+    uploadFileNow(file, name) {
+      const formData = new FormData()
+      formData.append(name, file)
+      createStorage(formData).then(res => {
+        console.log('res.data.data.url', res.data.data.url)
+        this.goods[name] = res.data.data.url
+      }).catch(() => {
+        console.log('上传失败，请重新上传')
+      })
+    },
     onRemoveUpload() {
+
     },
     onUploadChange(file) {
-      console.log('xxxxxxxxxxx', file)
-      this.uploadPic = file
+      this.uploadFileNow(file.raw, 'img_url')
     },
     onDetailRemoveUpload() {
+
     },
     onDetailUploadChange(file) {
-      console.log('xxxxxxxxxxx', file)
-      this.detailPic = file
+      this.uploadFileNow(file.raw, 'detail_url')
     },
     onPackageRemoveUpload() {
 
     },
     onPackageUploadChange(file) {
-      this.packagePic = file
+      this.uploadFileNow(file.raw, 'package_url')
     },
-    onCarouselRemoveUpload() {
+    onCarouselRemoveUpload1() {
 
     },
-    onCarouselUploadChange(file) {
-      this.carouselPic.push(file.raw)
+    onCarouselUploadChange1(file) {
+      this.uploadFileNow(file.raw, 'carousel_url_1')
+    },
+    onCarouselRemoveUpload2() {
+
+    },
+    onCarouselUploadChange2(file) {
+      this.uploadFileNow(file.raw, 'carousel_url_2')
+    },
+    onCarouselRemoveUpload3() {
+
+    },
+    onCarouselUploadChange3(file) {
+      this.uploadFileNow(file.raw, 'carousel_url_3')
     },
     handleEdit: function() {
       const params = this.goods
-      const formData = new FormData()
-      Object.keys(params).forEach((key) => {
-        formData.append(key, params[key])
-      })
-      formData.append('uploadPic', this.uploadPic.raw)
-      formData.append('detailPic', this.detailPic.raw)
-      formData.append('packagePic', this.packagePic.raw)
-      formData.append('carouselPic1', this.carouselPic[0])
-      formData.append('carouselPic2', this.carouselPic[1])
-      formData.append('carouselPic3', this.carouselPic[2])
-      editGoods(formData)
+      editGoods(params)
         .then(response => {
           this.$notify.success({
             title: '成功',
