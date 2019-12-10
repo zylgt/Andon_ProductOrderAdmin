@@ -339,3 +339,8 @@ export default {
   }
 }
 </script>
+<style rel="stylesheet/scss" lang="scss">
+  tr.el-table__row.expanded {
+    background-color: #87CEFA !important;
+  }
+</style>

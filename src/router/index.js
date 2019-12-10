@@ -88,7 +88,7 @@ export const asyncRouterMap = [
     name: 'userManage',
     meta: {
       title: '用户管理',
-      icon: 'chart'
+      icon: 'icon'
     },
     children: [
       {
@@ -146,7 +146,7 @@ export const asyncRouterMap = [
     name: 'goodsManage',
     meta: {
       title: '商品管理',
-      icon: 'chart'
+      icon: 'component'
     },
     children: [
       {
@@ -191,7 +191,7 @@ export const asyncRouterMap = [
     name: 'sysManage',
     meta: {
       title: '系统管理',
-      icon: 'chart'
+      icon: 'link'
     },
     children: [
       {
