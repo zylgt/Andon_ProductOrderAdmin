@@ -34,7 +34,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="文件名称" prop="title">
-          <el-input v-model="dataForm.title"/>
+          <el-input v-model.trim="dataForm.title"/>
         </el-form-item>
         <el-form-item label="文件">
           <el-upload
