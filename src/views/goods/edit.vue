@@ -16,12 +16,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="当前价格" prop="price">
-          <el-input v-model="goods.price" placeholder="0.00">
+          <el-input v-model="goods.price" type="number" placeholder="0.00">
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
         <el-form-item label="库存" prop="stock">
-          <el-input v-model="goods.stock" placeholder="0"/>
+          <el-input v-model="goods.stock" type="number" placeholder="0"/>
         </el-form-item>
         <el-form-item label="商品头图">
           <el-upload
@@ -220,7 +220,10 @@ export default {
         goodsSn: [
           { required: true, message: '商品编号不能为空', trigger: 'blur' }
         ],
-        name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }]
+        name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }],
+        product_type_id: [{ required: true, message: '所属分类不能为空', trigger: 'blur' }],
+        price: [{ required: true, message: '价格不能为空', trigger: 'blur' }],
+        stock: [{ required: true, message: '库存不能为空', trigger: 'blur' }]
       },
       editorInit: {
         language: 'zh_CN',

@@ -10,18 +10,18 @@
         <el-form-item label="商品名称" prop="name">
           <el-input v-model.trim="goods.name" oninput="if(value.length>15)value=value.slice(0,15)"/>
         </el-form-item>
-        <el-form-item label="所属分类">
+        <el-form-item label="所属分类" prop="product_type">
           <el-select v-model="goods.product_type">
             <el-option v-for="item in product_types" :key="item.id" :label="item.text" :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item label="当前价格" prop="price">
-          <el-input v-model="goods.price" placeholder="0.00">
+          <el-input-number v-model="goods.price" :min="0" :max="10000" placeholder="0.00">
             <template slot="append">元</template>
-          </el-input>
+          </el-input-number>
         </el-form-item>
         <el-form-item label="库存" prop="stock">
-          <el-input v-model="goods.stock" placeholder="0"/>
+          <el-input-number v-model="goods.stock" :min="0" placeholder="0"/>
         </el-form-item>
         <el-form-item label="商品头图">
           <el-upload
@@ -212,7 +212,10 @@ export default {
       attributes: [],
       rules: {
         goodsSn: [{ required: true, message: '商品编号不能为空', trigger: 'blur' }],
-        name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }]
+        name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }],
+        product_type: [{ required: true, message: '所属分类不能为空', trigger: 'blur' }],
+        price: [{ required: true, message: '价格不能为空', trigger: 'blur' }],
+        stock: [{ required: true, message: '库存不能为空', trigger: 'blur' }]
       },
       editorInit: {
         language: 'zh_CN',

@@ -139,7 +139,9 @@ export default {
         username: [
           { required: true, message: '名称不能为空', trigger: 'blur' }
         ],
-        password: [{ required: true, message: '密码不能为空', trigger: 'blur' }]
+        password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
+        mobile: [{ required: true, pattern: /^1[345789]\d{9}$/, message: '电话格式不正确', trigger: 'blur' }],
+        receiver_mobile: [{ required: true, pattern: /^1[345789]\d{9}$/, message: '电话格式不正确', trigger: 'blur' }]
       },
       downloadLoading: false,
       genderDic: ['未知', '男', '女'],
