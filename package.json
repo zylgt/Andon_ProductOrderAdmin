@@ -1,7 +1,7 @@
 {
   "name": "ProductOrderAdmin",
   "version": "0.1.0",
-  "description": "litemall-admin basing on vue-element-admin 3.9.3",
+  "description": "andon order admin basing on vue-element-admin 3.9.3",
   "private": true,
   "scripts": {
     "local": "cross-env BABEL_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
