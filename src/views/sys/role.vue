@@ -11,7 +11,11 @@
     <!-- 查询结果 -->
     <el-table v-loading="listLoading" :data="list" element-loading-text="正在查询中。。。" border fit highlight-current-row>
       <el-table-column align="center" label="文件名称" prop="title"/>
-
+      <el-table-column align="center" label="文件类型" prop="type">
+        <template slot-scope="scope">
+          <el-tag>{{ scope.row.type | fileTypeFilter }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="说明" prop="description"/>
       <!-- <el-table-column align="center" label="文件路径" prop="url"/> -->
       <el-table-column align="center" property="url" label="图片">
@@ -35,6 +39,11 @@
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="文件名称" prop="title">
           <el-input v-model.trim="dataForm.title"/>
+        </el-form-item>
+        <el-form-item label="所属分类" prop="type">
+          <el-select v-model="dataForm.type">
+            <el-option v-for="item in file_types" :key="item.id" :label="item.text" :value="item.id"/>
+          </el-select>
         </el-form-item>
         <el-form-item label="文件">
           <el-upload
@@ -90,9 +99,23 @@
 import { listRole, createRole, updateRole, deleteRole, updatePermission } from '@/api/role'
 import { uploadPath } from '@/api/storage'
 import Pagination from '@/components/Pagination'
+
+const statusMap = {
+  1: '公共资质',
+  2: '九安电子血压计',
+  3: 'BPM1',
+  4: 'BP5',
+  5: 'BG1血糖仪'
+}
+
 export default {
   name: 'Role',
   components: { Pagination },
+  filters: {
+    fileTypeFilter(status) {
+      return statusMap[status]
+    }
+  },
   data() {
     return {
       uploadPath,
@@ -121,9 +144,19 @@ export default {
         update: '编辑',
         create: '创建'
       },
+      file_types: [
+        { id: 1, text: '公共资质' },
+        { id: 2, text: '九安电子血压计' },
+        { id: 3, text: 'BPM1' },
+        { id: 4, text: 'BP5' },
+        { id: 5, text: 'BG1血糖仪' }
+      ],
       rules: {
         title: [
           { required: true, message: '文件名称不能为空', trigger: 'blur' }
+        ],
+        type: [
+          { required: true, message: '文件类型不能为空', trigger: 'blur' }
         ]
       },
       permissionDialogFormVisible: false,
