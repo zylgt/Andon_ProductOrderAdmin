@@ -1,44 +1,35 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
       <div class="title-container">
-        <h3 class="title">管理员登录</h3>
+        <h3 class="title">登录</h3>
       </div>
-      <el-form-item prop="username">
-        <span class="svg-container svg-container_login">
+      <el-form-item prop="phone">
+        <!-- <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
+        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" /> -->
+        <el-input v-model="loginForm.phone" name="phone" placeholder="手机号">
+          <template slot="append">
+            <el-button :disabled="disabled" type="button" class="btns" @click="sendcode">{{ btntxt }}</el-button>
+          </template>
+        </el-input>
       </el-form-item>
 
       <el-form-item prop="password">
-        <span class="svg-container">
+        <el-input v-model="loginForm.code" name="code" type="text" placeholder="验证码"/>
+        <!-- <el-input type="button" value="查询" class="btns search" @click="query"/> -->
+        <!-- <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
         <el-input :type="passwordType" v-model="loginForm.password" name="password" auto-complete="on" placeholder="password" @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
-        </span>
+        </span> -->
       </el-form-item>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-
-      <!-- <div style="position:relative">
-        <div class="tips">
-          <span> 超级管理员用户名: admin123</span>
-          <span> 超级管理员用户名：admin123</span>
-        </div>
-        <div class="tips">
-          <span> 商城管理员用户名: mall123</span>
-          <span> 商城管理员用户名：mall123</span>
-        </div>
-        <div class="tips">
-          <span> 推广管理员用户名: promotion123</span>
-          <span> 推广管理员用户名：promotion123</span>
-        </div>
-      </div> -->
     </el-form>
-
   </div>
 </template>
 
@@ -46,27 +37,25 @@
 export default {
   name: 'Login',
   data() {
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('管理员密码长度应大于6'))
-      } else {
-        callback()
-      }
-    }
     return {
       loginForm: {
-        username: 'admin123',
-        password: 'admin123'
+        phone: '',
+        code: ''
       },
       loginRules: {
-        username: [{ required: true, message: '管理员账户不允许为空', trigger: 'blur' }],
-        password: [
-          { required: true, message: '管理员密码不允许为空', trigger: 'blur' },
-          { validator: validatePassword, trigger: 'blur' }
+        phone: [{ required: true, message: '电话不允许为空', trigger: 'blur' }],
+        code: [
+          { required: true, message: '验证码不允许为空', trigger: 'blur' }
         ]
       },
       passwordType: 'password',
-      loading: false
+      loading: false,
+      disabled: false,
+      time: 0,
+      btntxt: '获取验证码',
+      formMess: {
+        phone: this.phone
+      }
     }
   },
   watch: {
@@ -85,6 +74,53 @@ export default {
     // window.removeEventListener('hashchange', this.afterQRScan)
   },
   methods: {
+    sendcode() {
+      console.log(this.loginForm.phone)
+      var reg = /^1[0-9]{10}$/
+      // var url="/nptOfficialWebsite/apply/sendSms?mobile="+this.ruleForm.phone;
+      if (this.loginForm.phone === '') {
+        alert('请输入手机号码')
+      } else if (!reg.test(this.loginForm.phone)) {
+        alert('手机格式不正确')
+      } else {
+        this.time = 60
+        this.disabled = true
+        this.timer()
+        this.query()
+      }
+    },
+    timer() {
+      if (this.time > 0) {
+        this.time--
+        this.btntxt = this.time + 's后重新获取'
+        setTimeout(this.timer, 1000)
+      } else {
+        this.time = 0
+        this.btntxt = '获取验证码'
+        this.disabled = false
+      }
+    },
+    query() {
+      if (!this.loading) {
+        this.loading = true
+        this.$store.dispatch('SendMessageCode', this.loginForm).then(() => {
+          this.loading = false
+          this.$notify.success({
+            title: '成功',
+            message: '发送验证码成功'
+          })
+        }).catch(response => {
+          console.log('respxxxx', response)
+          this.$notify.error({
+            title: '失败',
+            message: response.data.errmsg
+          })
+          this.loading = false
+        })
+      } else {
+        return false
+      }
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -96,14 +132,14 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid && !this.loading) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          this.$store.dispatch('LoginByCode', this.loginForm).then(() => {
             this.loading = false
             this.$router.push({ path: this.redirect || '/' })
           }).catch(response => {
             console.log('respxxxx', response)
             this.$notify.error({
               title: '失败',
-              message: response.data.errmsg
+              message: response.data.data.errmsg
             })
             this.loading = false
           })
@@ -119,34 +155,36 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
 $bg:#2d3a4b;
 $light_gray:#eee;
-
+input {
+  height: 42px !important;
+}
 /* reset element-ui css */
 .login-container {
-  .el-input {
-    display: inline-block;
-    height: 47px;
-    width: 85%;
-    input {
-      background: transparent;
-      border: 0px;
-      -webkit-appearance: none;
-      border-radius: 0px;
-      padding: 12px 5px 12px 15px;
-      color: $light_gray;
-      height: 47px;
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: #fff !important;
-      }
-    }
-  }
-  .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    color: #454545;
-  }
+  // .el-input {
+  //   display: inline-block;
+  //   height: 47px;
+  //   width: 85%;
+  //   input {
+  //     background: transparent;
+  //     border: 0px;
+  //     -webkit-appearance: none;
+  //     border-radius: 0px;
+  //     padding: 12px 5px 12px 15px;
+  //     color: $light_gray;
+  //     height: 47px;
+  //     &:-webkit-autofill {
+  //       box-shadow: 0 0 0px 1000px $bg inset !important;
+  //       -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
+  //       -webkit-text-fill-color: #fff !important;
+  //     }
+  //   }
+  // }
+  // .el-form-item {
+  //   border: 1px solid rgba(255, 255, 255, 0.1);
+  //   background: rgba(0, 0, 0, 0.1);
+  //   border-radius: 5px;
+  //   color: #454545;
+  // }
 }
 </style>
 
@@ -170,7 +208,7 @@ $light_gray:#eee;
   }
   .tips {
     font-size: 14px;
-    color: #fff;
+    // color: #fff;
     margin-bottom: 10px;
     span {
       &:first-of-type {

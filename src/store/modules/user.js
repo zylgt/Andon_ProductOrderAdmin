@@ -1,4 +1,4 @@
-import { loginByUsername, logout, getUserInfo } from '@/api/login'
+import { sendMessageCode, verifySmsCode, loginByUsername, logout, getUserInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -48,11 +48,42 @@ const user = {
   },
 
   actions: {
+    // 发送验证码
+    SendMessageCode({ commit }, userInfo) {
+      const phone = userInfo.phone.trim()
+      return new Promise((resolve, reject) => {
+        sendMessageCode(phone).then(response => {
+          console.log('resssss', response)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 短信验证码登录
+    LoginByCode({ commit }, userInfo) {
+      const phone = userInfo.phone.trim()
+      return new Promise((resolve, reject) => {
+        verifySmsCode(phone, userInfo.code).then(response => {
+          console.log('resssss', response)
+          if (response.data.errno === 0) {
+            const token = response.data.data.token
+            commit('SET_TOKEN', token)
+            setToken(token)
+            resolve()
+          } else {
+            reject(response.data.data.errmsg)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
-      const username = userInfo.username.trim()
+      const phone = userInfo.phone.trim()
       return new Promise((resolve, reject) => {
-        loginByUsername(username, userInfo.password).then(response => {
+        loginByUsername(phone, userInfo.code).then(response => {
           console.log('resssss', response)
           const token = response.data.data.token
           commit('SET_TOKEN', token)
