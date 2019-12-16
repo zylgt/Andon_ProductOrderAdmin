@@ -87,6 +87,14 @@
       <back-to-top :visibility-height="100" />
     </el-tooltip>
 
+    <!-- 确认删除对话框 -->
+    <el-dialog :title="textTips" :visible.sync="dialogFormVisible" width="30%">
+      <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="deleteData">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -129,6 +137,9 @@ export default {
         sort: 'add_time',
         order: 'desc'
       },
+      textTips: '提示',
+      dialogFormVisible: false,
+      deleteId: 0,
       goodsDetail: '',
       detailDialogVisible: false,
       downloadLoading: false
@@ -165,7 +176,13 @@ export default {
       this.detailDialogVisible = true
     },
     handleDelete(row) {
+      this.deleteRow = row
+      this.dialogFormVisible = true
+    },
+    deleteData() {
+      const row = this.deleteRow
       deleteGoods(row).then(response => {
+        this.dialogFormVisible = false
         this.$notify.success({
           title: '成功',
           message: '删除成功'
@@ -173,6 +190,7 @@ export default {
         const index = this.list.indexOf(row)
         this.list.splice(index, 1)
       }).catch(response => {
+        this.dialogFormVisible = false
         this.$notify.error({
           title: '失败',
           message: response.data.errmsg

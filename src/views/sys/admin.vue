@@ -42,6 +42,14 @@
       </div>
     </el-dialog>
 
+    <!-- 确认删除对话框 -->
+    <el-dialog :title="textTips" :visible.sync="dialogDeleteVisible" width="30%">
+      <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeleteVisible = false">取消</el-button>
+        <el-button type="primary" @click="deleteData">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -100,6 +108,9 @@ export default {
         avatar: undefined
       },
       dialogFormVisible: false,
+      textTips: '提示',
+      dialogDeleteVisible: false,
+      deleteRow: 0,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -219,8 +230,14 @@ export default {
       })
     },
     handleDelete(row) {
+      this.deleteRow = row
+      this.dialogDeleteVisible = true
+    },
+    deleteData() {
+      const row = this.deleteRow
       deleteAdmin(row)
         .then(response => {
+          this.dialogDeleteVisible = false
           this.$notify.success({
             title: '成功',
             message: '删除公告成功'
@@ -229,6 +246,7 @@ export default {
           this.list.splice(index, 1)
         })
         .catch(response => {
+          this.dialogDeleteVisible = false
           this.$notify.error({
             title: '失败',
             message: response.data.errmsg
