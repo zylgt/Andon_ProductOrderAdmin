@@ -158,7 +158,14 @@
         <el-button type="primary" @click="confirmRefund">确定</el-button>
       </div>
     </el-dialog>
-
+    <!-- 审核确认对话框 -->
+    <el-dialog :title="textTips" :visible.sync="dialogDeleteVisible" width="30%">
+      <span style="font-size:20px;margin-left:30px;">是否确定审核通过？</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeleteVisible = false">取消</el-button>
+        <el-button type="primary" @click="deleteData">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -204,6 +211,9 @@ export default {
       },
       statusMap,
       orderDialogVisible: false,
+      textTips: '提示',
+      dialogDeleteVisible: false,
+      deleteRow: 0,
       orderDetail: {
         order: {},
         user: {},
@@ -262,7 +272,13 @@ export default {
       })
     },
     handleCheck(row) {
+      this.deleteRow = row
+      this.dialogDeleteVisible = true
+    },
+    deleteData() {
+      const row = this.deleteRow
       checkOrder({ order_id: row.id }).then(response => {
+        this.dialogDeleteVisible = false
         this.shipDialogVisible = false
         this.$notify.success({
           title: '成功',
@@ -270,6 +286,7 @@ export default {
         })
         this.getList()
       }).catch(response => {
+        this.dialogDeleteVisible = false
         this.$notify.error({
           title: '失败',
           message: response.data.errmsg
