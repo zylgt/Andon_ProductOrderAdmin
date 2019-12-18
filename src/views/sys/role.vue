@@ -13,7 +13,7 @@
       <el-table-column align="center" label="文件名称" prop="title"/>
       <el-table-column align="center" label="文件类型" prop="type">
         <template slot-scope="scope">
-          <el-tag>{{ scope.row.type | fileTypeFilter }}</el-tag>
+          <el-tag>{{ scope.row.name }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="说明" prop="description"/>
@@ -108,22 +108,9 @@ import { listRole, createRole, updateRole, deleteRole, updatePermission } from '
 import { uploadPath } from '@/api/storage'
 import Pagination from '@/components/Pagination'
 
-const statusMap = {
-  1: '公共资质',
-  2: '九安电子血压计',
-  3: 'BPM1',
-  4: 'BP5',
-  5: 'BG1血糖仪'
-}
-
 export default {
   name: 'Role',
   components: { Pagination },
-  filters: {
-    fileTypeFilter(status) {
-      return statusMap[status]
-    }
-  },
   data() {
     return {
       uploadPath,
@@ -155,13 +142,7 @@ export default {
         update: '编辑',
         create: '创建'
       },
-      file_types: [
-        { id: 1, text: '公共资质' },
-        { id: 2, text: '九安电子血压计' },
-        { id: 3, text: 'BPM1' },
-        { id: 4, text: 'BP5' },
-        { id: 5, text: 'BG1血糖仪' }
-      ],
+      file_types: [],
       rules: {
         title: [
           { required: true, message: '文件名称不能为空', trigger: 'blur' }
@@ -188,6 +169,7 @@ export default {
       listRole(this.listQuery)
         .then(response => {
           this.list = response.data.data.list
+          this.file_types = response.data.data.file_types
           this.total = response.data.data.total
           this.listLoading = false
         })

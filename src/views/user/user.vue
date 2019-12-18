@@ -157,12 +157,12 @@ export default {
       },
       downloadLoading: false,
       genderDic: ['未知', '男', '女'],
-      levelDic: ['未知', '管理员', '订单员', '仓库', '用户'],
+      levelDic: ['未知', '管理员', '订单员', '发货员', '用户'],
       statusDic: ['注销', '可用', '禁用'],
       roleOptions: [
         { id: 1, text: '管理员' },
         { id: 2, text: '订单员' },
-        { id: 3, text: '仓库' },
+        { id: 3, text: '发货员' },
         { id: 4, text: '用户' }
       ]
     }
