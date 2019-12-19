@@ -209,12 +209,20 @@ export default {
         if (valid) {
           createAdmin(this.dataForm)
             .then(response => {
-              this.list.unshift(response.data.data)
               this.dialogFormVisible = false
-              this.$notify.success({
-                title: '成功',
-                message: '添加管理员成功'
-              })
+              console.log(response)
+              if (response.data.message === '500') {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.data.errmsg
+                })
+              } else {
+                this.list.unshift(response.data.data)
+                this.$notify.success({
+                  title: '成功',
+                  message: '添加管理员成功'
+                })
+              }
             })
             .catch(response => {
               this.$notify.error({
