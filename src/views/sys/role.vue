@@ -67,8 +67,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">确定</el-button>
-        <el-button v-else type="primary" @click="updateData">确定</el-button>
+        <el-button v-if="dialogStatus=='create'" :disabled="createBtnDisabled" type="primary" @click="createData">确定</el-button>
+        <el-button v-else :disabled="updateBtnDisabled" type="primary" @click="updateData">确定</el-button>
       </div>
     </el-dialog>
 
@@ -96,7 +96,7 @@
       <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteVisible = false">取消</el-button>
-        <el-button type="primary" @click="deleteData">确定</el-button>
+        <el-button :disabled="deleteBtnDisabled" type="primary" @click="deleteData">确定</el-button>
       </div>
     </el-dialog>
 
@@ -137,6 +137,9 @@ export default {
       textTips: '提示',
       dialogDeleteVisible: false,
       deleteRow: 0,
+      createBtnDisabled: false,
+      updateBtnDisabled: false,
+      deleteBtnDisabled: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -207,26 +210,31 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
+          this.createBtnDisabled = true
           const formData = new FormData()
           Object.keys(this.dataForm).forEach((key) => {
             formData.append(key, this.dataForm[key])
           })
           formData.append('uploadPic', this.uploadPic.raw)
-          createRole(formData)
-            .then(response => {
-              this.list.unshift(response.data.data)
-              this.dialogFormVisible = false
-              this.$notify.success({
-                title: '成功',
-                message: '添加文件成功'
+          setTimeout(() => {
+            createRole(formData)
+              .then(response => {
+                this.createBtnDisabled = false
+                this.list.unshift(response.data.data)
+                this.dialogFormVisible = false
+                this.$notify.success({
+                  title: '成功',
+                  message: '添加文件成功'
+                })
               })
-            })
-            .catch(response => {
-              this.$notify.error({
-                title: '失败',
-                message: response.data.errmsg
+              .catch(response => {
+                this.createBtnDisabled = false
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.errmsg
+                })
               })
-            })
+          }, 500)
         }
       })
     },
@@ -242,33 +250,38 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
+          this.updateBtnDisabled = true
           const formData = new FormData()
           Object.keys(this.dataForm).forEach((key) => {
             formData.append(key, this.dataForm[key])
           })
           formData.append('uploadPic', this.uploadPic.raw)
-          updateRole(formData)
-            .then((response) => {
-              for (const v of this.list) {
-                if (v.id === this.dataForm.id) {
-                  const index = this.list.indexOf(v)
-                  this.dataForm.url = response.data.data.url
-                  this.list.splice(index, 1, this.dataForm)
-                  break
+          setTimeout(() => {
+            updateRole(formData)
+              .then((response) => {
+                this.updateBtnDisabled = false
+                for (const v of this.list) {
+                  if (v.id === this.dataForm.id) {
+                    const index = this.list.indexOf(v)
+                    this.dataForm.url = response.data.data.url
+                    this.list.splice(index, 1, this.dataForm)
+                    break
+                  }
                 }
-              }
-              this.dialogFormVisible = false
-              this.$notify.success({
-                title: '成功',
-                message: '更新管理员成功'
+                this.dialogFormVisible = false
+                this.$notify.success({
+                  title: '成功',
+                  message: '更新管理员成功'
+                })
               })
-            })
-            .catch(response => {
-              this.$notify.error({
-                title: '失败',
-                message: response.data.errmsg
+              .catch(response => {
+                this.updateBtnDisabled = false
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.errmsg
+                })
               })
-            })
+          }, 500)
         }
       })
     },
@@ -277,24 +290,29 @@ export default {
       this.dialogDeleteVisible = true
     },
     deleteData() {
+      this.deleteBtnDisabled = true
       const row = this.deleteRow
-      deleteRole(row)
-        .then(response => {
-          this.dialogDeleteVisible = false
-          this.$notify.success({
-            title: '成功',
-            message: '删除文件成功'
+      setTimeout(() => {
+        deleteRole(row)
+          .then(response => {
+            this.deleteBtnDisabled = false
+            this.dialogDeleteVisible = false
+            this.$notify.success({
+              title: '成功',
+              message: '删除文件成功'
+            })
+            const index = this.list.indexOf(row)
+            this.list.splice(index, 1)
           })
-          const index = this.list.indexOf(row)
-          this.list.splice(index, 1)
-        })
-        .catch(response => {
-          this.dialogDeleteVisible = false
-          this.$notify.error({
-            title: '失败',
-            message: response.data.errmsg
+          .catch(response => {
+            this.deleteBtnDisabled = false
+            this.dialogDeleteVisible = false
+            this.$notify.error({
+              title: '失败',
+              message: response.data.errmsg
+            })
           })
-        })
+      }, 500)
     },
     updatePermission() {
       this.permissionForm.permissions = this.$refs.tree.getCheckedKeys(true)

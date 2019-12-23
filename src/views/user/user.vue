@@ -90,8 +90,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">确定</el-button>
-        <el-button v-else type="primary" @click="updateData">确定</el-button>
+        <el-button v-if="dialogStatus=='create'" :disabled="createBtnDisabled" type="primary" @click="createData">确定</el-button>
+        <el-button v-else :disabled="updateBtnDisabled" type="primary" @click="updateData">确定</el-button>
       </div>
     </el-dialog>
 
@@ -100,7 +100,7 @@
       <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteVisible = false">取消</el-button>
-        <el-button type="primary" @click="deleteData">确定</el-button>
+        <el-button :disabled="deleteBtnDisabled" type="primary" @click="deleteData">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -142,6 +142,9 @@ export default {
       textTips: '提示',
       dialogDeleteVisible: false,
       deleteRow: 0,
+      createBtnDisabled: false,
+      updateBtnDisabled: false,
+      deleteBtnDisabled: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -207,29 +210,34 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          createAdmin(this.dataForm)
-            .then(response => {
-              this.dialogFormVisible = false
-              console.log(response)
-              if (response.data.message === '500') {
+          this.createBtnDisabled = true
+          setTimeout(() => {
+            createAdmin(this.dataForm)
+              .then(response => {
+                this.dialogFormVisible = false
+                this.createBtnDisabled = false
+                console.log(response)
+                if (response.data.message === '500') {
+                  this.$notify.error({
+                    title: '失败',
+                    message: response.data.data.errmsg
+                  })
+                } else {
+                  this.list.unshift(response.data.data)
+                  this.$notify.success({
+                    title: '成功',
+                    message: '添加管理员成功'
+                  })
+                }
+              })
+              .catch(response => {
+                this.createBtnDisabled = false
                 this.$notify.error({
                   title: '失败',
-                  message: response.data.data.errmsg
+                  message: response.data.errmsg
                 })
-              } else {
-                this.list.unshift(response.data.data)
-                this.$notify.success({
-                  title: '成功',
-                  message: '添加管理员成功'
-                })
-              }
-            })
-            .catch(response => {
-              this.$notify.error({
-                title: '失败',
-                message: response.data.errmsg
               })
-            })
+          }, 500)
         }
       })
     },
@@ -244,27 +252,32 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          updateAdmin(this.dataForm)
-            .then(() => {
-              for (const v of this.list) {
-                if (v.id === this.dataForm.id) {
-                  const index = this.list.indexOf(v)
-                  this.list.splice(index, 1, this.dataForm)
-                  break
+          this.updateBtnDisabled = true
+          setTimeout(() => {
+            updateAdmin(this.dataForm)
+              .then(() => {
+                this.updateBtnDisabled = false
+                for (const v of this.list) {
+                  if (v.id === this.dataForm.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.dataForm)
+                    break
+                  }
                 }
-              }
-              this.dialogFormVisible = false
-              this.$notify.success({
-                title: '成功',
-                message: '更新管理员成功'
+                this.dialogFormVisible = false
+                this.$notify.success({
+                  title: '成功',
+                  message: '更新管理员成功'
+                })
               })
-            })
-            .catch(response => {
-              this.$notify.error({
-                title: '失败',
-                message: response.data.errmsg
+              .catch(response => {
+                this.updateBtnDisabled = false
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.errmsg
+                })
               })
-            })
+          }, 500)
         }
       })
     },
@@ -273,24 +286,29 @@ export default {
       this.dialogDeleteVisible = true
     },
     deleteData() {
+      this.deleteBtnDisabled = true
       const row = this.deleteRow
-      deleteAdmin(row)
-        .then(response => {
-          this.dialogDeleteVisible = false
-          this.$notify.success({
-            title: '成功',
-            message: '删除管理员成功'
+      setTimeout(() => {
+        deleteAdmin(row)
+          .then(response => {
+            this.deleteBtnDisabled = false
+            this.dialogDeleteVisible = false
+            this.$notify.success({
+              title: '成功',
+              message: '删除管理员成功'
+            })
+            const index = this.list.indexOf(row)
+            this.list.splice(index, 1)
           })
-          const index = this.list.indexOf(row)
-          this.list.splice(index, 1)
-        })
-        .catch(response => {
-          this.dialogDeleteVisible = false
-          this.$notify.error({
-            title: '失败',
-            message: response.data.errmsg
+          .catch(response => {
+            this.deleteBtnDisabled = false
+            this.dialogDeleteVisible = false
+            this.$notify.error({
+              title: '失败',
+              message: response.data.errmsg
+            })
           })
-        })
+      }, 500)
     },
     handleDownload() {
       this.downloadLoading = true

@@ -92,7 +92,7 @@
       <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="deleteData">确定</el-button>
+        <el-button :disabled="deleteDisabled" type="primary" @click="deleteData">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -142,6 +142,7 @@ export default {
       deleteId: 0,
       goodsDetail: '',
       detailDialogVisible: false,
+      deleteDisabled: false,
       downloadLoading: false
     }
   },
@@ -181,21 +182,26 @@ export default {
     },
     deleteData() {
       const row = this.deleteRow
-      deleteGoods(row).then(response => {
-        this.dialogFormVisible = false
-        this.$notify.success({
-          title: '成功',
-          message: '删除成功'
+      this.deleteDisabled = true
+      setTimeout(() => {
+        deleteGoods(row).then(response => {
+          this.dialogFormVisible = false
+          this.deleteDisabled = false
+          this.$notify.success({
+            title: '成功',
+            message: '删除成功'
+          })
+          const index = this.list.indexOf(row)
+          this.list.splice(index, 1)
+        }).catch(response => {
+          this.dialogFormVisible = false
+          this.deleteDisabled = false
+          this.$notify.error({
+            title: '失败',
+            message: response.data.errmsg
+          })
         })
-        const index = this.list.indexOf(row)
-        this.list.splice(index, 1)
-      }).catch(response => {
-        this.dialogFormVisible = false
-        this.$notify.error({
-          title: '失败',
-          message: response.data.errmsg
-        })
-      })
+      }, 500)
     },
     handleDownload() {
       this.downloadLoading = true

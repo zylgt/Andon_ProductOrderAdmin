@@ -132,7 +132,7 @@
     </el-card>
     <div class="op-container">
       <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click="handleEdit">更新商品</el-button>
+      <el-button :disabled="updateDisabled" type="primary" @click="handleEdit">更新商品</el-button>
     </div>
 
   </div>
@@ -205,6 +205,7 @@ export default {
       specVisiable: false,
       specForm: { specification: '', value: '', picUrl: '' },
       productVisiable: false,
+      updateDisabled: false,
       productForm: {
         id: 0,
         price: 0.0,
@@ -333,21 +334,26 @@ export default {
       this.uploadFileNow(file.raw, 'carousel_url_3')
     },
     handleEdit: function() {
+      this.updateDisabled = true
       const params = this.goods
-      editGoods(params)
-        .then(response => {
-          this.$notify.success({
-            title: '成功',
-            message: '创建成功'
+      setTimeout(() => {
+        editGoods(params)
+          .then(response => {
+            this.updateDisabled = false
+            this.$notify.success({
+              title: '成功',
+              message: '创建成功'
+            })
+            this.$router.push({ path: '/goods/list' })
           })
-          this.$router.push({ path: '/goods/list' })
-        })
-        .catch(response => {
-          MessageBox.alert('业务错误：' + response.data.errmsg, '警告', {
-            confirmButtonText: '确定',
-            type: 'error'
+          .catch(response => {
+            this.updateDisabled = false
+            MessageBox.alert('业务错误：' + response.data.errmsg, '警告', {
+              confirmButtonText: '确定',
+              type: 'error'
+            })
           })
-        })
+      }, 500)
     },
     showInput() {
       this.newKeywordVisible = true

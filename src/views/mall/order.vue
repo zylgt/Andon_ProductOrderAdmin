@@ -142,7 +142,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="shipDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="confirmShip">确定</el-button>
+        <el-button :disabled="shipDisabled" type="primary" @click="confirmShip">确定</el-button>
       </div>
     </el-dialog>
 
@@ -163,7 +163,7 @@
       <span style="font-size:20px;margin-left:30px;">是否确定审核通过？</span>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteVisible = false">取消</el-button>
-        <el-button type="primary" @click="deleteData">确定</el-button>
+        <el-button :disabled="btnChangeEnable" type="primary" @click="deleteData">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -213,6 +213,8 @@ export default {
       orderDialogVisible: false,
       textTips: '提示',
       dialogDeleteVisible: false,
+      btnChangeEnable: false,
+      shipDisabled: false,
       deleteRow: 0,
       orderDetail: {
         order: {},
@@ -276,40 +278,52 @@ export default {
       this.dialogDeleteVisible = true
     },
     deleteData() {
+      this.btnChangeEnable = true
       const row = this.deleteRow
-      checkOrder({ order_id: row.id }).then(response => {
-        this.dialogDeleteVisible = false
-        this.shipDialogVisible = false
-        this.$notify.success({
-          title: '成功',
-          message: '审核成功'
+      setTimeout(() => {
+        checkOrder({ order_id: row.id }).then(response => {
+          this.dialogDeleteVisible = false
+          this.shipDialogVisible = false
+          this.btnChangeEnable = false
+          this.$notify.success({
+            title: '成功',
+            message: '审核成功'
+          })
+          this.getList()
+        }).catch(response => {
+          this.btnChangeEnable = false
+          this.dialogDeleteVisible = false
+          this.$notify.error({
+            title: '失败',
+            message: response.data.errmsg
+          })
         })
-        this.getList()
-      }).catch(response => {
-        this.dialogDeleteVisible = false
-        this.$notify.error({
-          title: '失败',
-          message: response.data.errmsg
-        })
-      })
+      }, 500)
     },
     confirmShip() {
+      this.shipDisabled = true
       this.$refs['shipForm'].validate((valid) => {
         if (valid) {
           console.log('shipForm', this.shipForm)
-          shipOrder(this.shipForm).then(response => {
-            this.shipDialogVisible = false
-            this.$notify.success({
-              title: '成功',
-              message: '物流更新成功'
+          setTimeout(() => {
+            shipOrder(this.shipForm).then(response => {
+              this.shipDisabled = false
+              this.shipDialogVisible = false
+              this.$notify.success({
+                title: '成功',
+                message: '物流更新成功'
+              })
+              this.getList()
+            }).catch(response => {
+              this.shipDisabled = false
+              this.$notify.error({
+                title: '失败',
+                message: response.data.errmsg
+              })
             })
-            this.getList()
-          }).catch(response => {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.errmsg
-            })
-          })
+          }, 500)
+        } else {
+          this.shipDisabled = false
         }
       })
     },

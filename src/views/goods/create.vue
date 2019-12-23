@@ -128,7 +128,7 @@
 
     <div class="op-container">
       <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click="handlePublish">上架</el-button>
+      <el-button disabled="createDisabled" type="primary" @click="handlePublish">上架</el-button>
     </div>
 
   </div>
@@ -208,6 +208,7 @@ export default {
       multipleSpec: false,
       productVisiable: false,
       attributeVisiable: false,
+      createDisabled: false,
       attributeForm: { attribute: '', value: '' },
       attributes: [],
       rules: {
@@ -297,22 +298,27 @@ export default {
     handlePublish: function() {
       this.$refs['goods'].validate(valid => {
         if (valid) {
+          this.createDisabled = true
           this.listLoading = true
           const params = this.goods
-          publishGoods(params).then(response => {
-            this.listLoading = false
-            this.$notify.success({
-              title: '成功',
-              message: '创建成功'
+          setTimeout(() => {
+            publishGoods(params).then(response => {
+              this.createDisabled = false
+              this.listLoading = false
+              this.$notify.success({
+                title: '成功',
+                message: '创建成功'
+              })
+              this.$router.push({ path: '/goods/list' })
+            }).catch(response => {
+              this.createDisabled = false
+              this.listLoading = false
+              MessageBox.alert('业务错误：' + response.data.errmsg, '警告', {
+                confirmButtonText: '确定',
+                type: 'error'
+              })
             })
-            this.$router.push({ path: '/goods/list' })
-          }).catch(response => {
-            this.listLoading = false
-            MessageBox.alert('业务错误：' + response.data.errmsg, '警告', {
-              confirmButtonText: '确定',
-              type: 'error'
-            })
-          })
+          }, 500)
         }
       })
     },
