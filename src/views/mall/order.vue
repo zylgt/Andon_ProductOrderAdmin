@@ -52,9 +52,12 @@
       <el-table-column align="center" min-width="120" label="发货时间" prop="send_time"/>
 
       <el-table-column align="center" label="物流单号" prop="logistics_no"/>
-
-      <el-table-column align="center" label="物流渠道" prop="logistics_company_name"/>
-
+      <el-table-column align="center" label="物流渠道" prop="logistics_company_name">
+        <template v-if="scope.row.logistics_company_name" slot-scope="scope">
+          <el-tag>{{ scope.row.logistics_company_name | logisticFilter }}</el-tag>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column align="center" label="物流渠道" prop="logistics_company_name"/> -->
       <el-table-column align="center" label="操作" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <!-- <el-button v-permission="['GET /admin/order/detail']" type="primary" size="mini" @click="handleDetail(scope.row)">详情</el-button> -->
@@ -129,7 +132,9 @@
     <el-dialog :visible.sync="shipDialogVisible" title="更新">
       <el-form ref="shipForm" :model="shipForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="快递公司" prop="logistics_company_name">
-          <el-input v-model="shipForm.logistics_company_name"/>
+          <el-select v-model="shipForm.logistics_company_name">
+            <el-option v-for="item in logisticList" :key="item.id" :label="item.text" :value="item.id"/>
+          </el-select>
         </el-form-item>
         <el-form-item label="快递编号" prop="logistics_no">
           <el-input v-model="shipForm.logistics_no"/>
@@ -180,6 +185,13 @@ const statusMap = {
   3: '待收货',
   4: '已完成'
 }
+const logisticMap = {
+  0: '百世快运',
+  1: '跨越物流',
+  2: '顺丰速运',
+  3: '圆通速递',
+  4: '中通快递'
+}
 
 export default {
   name: 'Order',
@@ -187,6 +199,9 @@ export default {
   filters: {
     orderStatusFilter(status) {
       return statusMap[status]
+    },
+    logisticFilter(status) {
+      return logisticMap[status]
     }
   },
   data() {
@@ -197,6 +212,13 @@ export default {
         { id: 2, text: '待发货' },
         { id: 3, text: '待收货' },
         { id: 4, text: '已完成' }
+      ],
+      logisticList: [
+        { id: 0, text: '百世快运' },
+        { id: 1, text: '跨越物流' },
+        { id: 2, text: '顺丰速运' },
+        { id: 3, text: '圆通速递' },
+        { id: 4, text: '中通快递' }
       ],
       total: 0,
       listLoading: true,
