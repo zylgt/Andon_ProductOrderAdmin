@@ -62,7 +62,7 @@
         <template slot-scope="scope">
           <!-- <el-button v-permission="['GET /admin/order/detail']" type="primary" size="mini" @click="handleDetail(scope.row)">详情</el-button> -->
           <el-button v-if="scope.row.status==1" type="primary" size="mini" @click="handleCheck(scope.row)">审核</el-button>
-          <el-button type="primary" size="mini" @click="handleShip(scope.row)">物流</el-button>
+          <el-button v-if="scope.row.status>1" type="primary" size="mini" @click="handleShip(scope.row)">物流</el-button>
         </template>
       </el-table-column>
     </el-table>
