@@ -130,8 +130,7 @@ export default {
       dataForm: {
         id: undefined,
         title: undefined,
-        description: undefined,
-        url: undefined
+        description: undefined
       },
       dialogFormVisible: false,
       textTips: '提示',
@@ -198,6 +197,7 @@ export default {
         title: undefined,
         description: undefined
       }
+      this.fileList = []
     },
     handleCreate() {
       this.resetForm()

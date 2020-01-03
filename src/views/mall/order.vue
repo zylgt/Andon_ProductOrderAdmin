@@ -53,7 +53,7 @@
 
       <el-table-column align="center" label="物流单号" prop="logistics_no"/>
       <el-table-column align="center" label="物流渠道" prop="logistics_company_name">
-        <template v-if="scope.row.logistics_company_name" slot-scope="scope">
+        <template v-if="scope.row.logistics_company_name!=null" slot-scope="scope">
           <el-tag>{{ scope.row.logistics_company_name | logisticFilter }}</el-tag>
         </template>
       </el-table-column>
