@@ -128,7 +128,7 @@
 
     <div class="op-container">
       <el-button @click="handleCancel">取消</el-button>
-      <el-button disabled="createDisabled" type="primary" @click="handlePublish">上架</el-button>
+      <el-button :disabled="createDisabled" type="primary" @click="handlePublish">上架</el-button>
     </div>
 
   </div>
