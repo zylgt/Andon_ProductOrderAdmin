@@ -52,7 +52,7 @@
             :auto-upload="false"
             :on-remove="onRemoveUpload"
             :on-change="onUploadChange"
-            :limit="1"
+            :limit="8"
             :file-list="fileList"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"

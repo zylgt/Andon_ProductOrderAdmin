@@ -105,6 +105,40 @@ export const asyncRouterMap = [
   },
 
   {
+    path: '/agent',
+    component: Layout,
+    redirect: 'noredirect',
+    alwaysShow: true,
+    name: 'agentManage',
+    meta: {
+      title: '渠道管理',
+      icon: 'icon'
+    },
+    children: [
+      {
+        path: 'agent',
+        component: () => import('@/views/agent/list'),
+        name: 'agent',
+        meta: {
+          perms: ['GET /admin/agent/list'],
+          title: '渠道管理',
+          noCache: true
+        }
+      },
+      {
+        path: 'price',
+        component: () => import('@/views/agent/price'),
+        name: 'price',
+        meta: {
+          perms: ['GET /admin/agent/list'],
+          title: '价格管理',
+          noCache: true
+        }
+      }
+    ]
+  },
+
+  {
     path: '/mall',
     component: Layout,
     redirect: 'noredirect',
@@ -179,6 +213,16 @@ export const asyncRouterMap = [
           noCache: true
         },
         hidden: true
+      },
+      {
+        path: 'productType',
+        component: () => import('@/views/goods/productType'),
+        name: 'productType',
+        meta: {
+          perms: ['GET /admin/goods/detail', 'POST /admin/goods/update', 'POST /admin/goods/catAndBrand'],
+          title: '商品类别',
+          noCache: true
+        }
       }
     ]
   },

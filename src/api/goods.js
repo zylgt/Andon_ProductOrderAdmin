@@ -46,3 +46,32 @@ export function listCatAndBrand() {
     method: 'get'
   })
 }
+
+export function listProductType(query) {
+  return request({
+    url: '/product/api/listProductType',
+    method: 'get',
+    params: query
+  })
+}
+export function createProductType(data) {
+  return request({
+    url: '/product/api/createProductType',
+    method: 'post',
+    data
+  })
+}
+export function updateProductType(data) {
+  return request({
+    url: '/product/api/updateProductType',
+    method: 'post',
+    data
+  })
+}
+export function deleteProductType(data) {
+  return request({
+    url: '/product/api/deleteProductType',
+    method: 'post',
+    data
+  })
+}
