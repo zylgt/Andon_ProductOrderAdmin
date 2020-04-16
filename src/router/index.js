@@ -164,7 +164,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/mall/order'),
         name: 'order',
         meta: {
-          perms: ['GET /admin/order/list', 'GET /admin/order/detail', 'POST /admin/order/ordership', 'POST /admin/order/orderrefund', 'POST /admin/order/orderreply'],
+          perms: ['GET /admin/order/list'],
           title: '订单管理',
           noCache: true
         }
@@ -188,7 +188,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/goods/list'),
         name: 'goodsList',
         meta: {
-          perms: ['GET /admin/goods/list', 'POST /admin/goods/delete'],
+          perms: ['GET /admin/goods/list'],
           title: '商品列表',
           noCache: true
         }
@@ -208,7 +208,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/goods/edit'),
         name: 'goodsEdit',
         meta: {
-          perms: ['GET /admin/goods/detail', 'POST /admin/goods/update', 'POST /admin/goods/catAndBrand'],
+          perms: ['POST /admin/goods/edit'],
           title: '商品编辑',
           noCache: true
         },
@@ -219,7 +219,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/goods/productType'),
         name: 'productType',
         meta: {
-          perms: ['GET /admin/goods/detail', 'POST /admin/goods/update', 'POST /admin/goods/catAndBrand'],
+          perms: ['GET /admin/productType/list'],
           title: '商品类别',
           noCache: true
         }
@@ -243,7 +243,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/sys/admin'),
         name: 'admin',
         meta: {
-          perms: ['GET /admin/admin/list', 'POST /admin/admin/create', 'POST /admin/admin/update', 'POST /admin/admin/delete'],
+          perms: ['GET /admin/notice/list'],
           title: '公告管理',
           noCache: true
         }
@@ -253,7 +253,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/sys/role'),
         name: 'role',
         meta: {
-          perms: ['GET /admin/role/list', 'POST /admin/role/create', 'POST /admin/role/update', 'POST /admin/role/delete', 'GET /admin/role/permissions', 'POST /admin/role/permissions'],
+          perms: ['GET /admin/file/list'],
           title: '文件管理',
           noCache: true
         }

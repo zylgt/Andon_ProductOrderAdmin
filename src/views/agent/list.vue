@@ -3,7 +3,7 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
-      <el-button v-permission="['POST /admin/ad/create']" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
     </div>
 
     <!-- 查询结果 -->
@@ -17,9 +17,9 @@
 
       <el-table-column align="center" label="操作" width="400" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-permission="['POST /admin/agent/update']" type="primary" size="mini" style="width:72px !important" @click="handlePrice(scope.row)">价格维护</el-button>
-          <el-button v-permission="['POST /admin/agent/update']" type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
-          <el-button v-permission="['POST /admin/agent/delete']" type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="primary" size="mini" style="width:72px !important" @click="handlePrice(scope.row)">价格维护</el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -91,18 +91,16 @@ export default {
         page: 1,
         limit: 20,
         name: undefined,
-        content: undefined,
+        NO: undefined,
+        token: getToken(),
         sort: 'add_time',
         order: 'desc'
       },
       dataForm: {
         id: undefined,
         name: undefined,
-        content: undefined,
-        url: undefined,
-        link: undefined,
-        position: 1,
-        enabled: true
+        NO: undefined,
+        token: getToken()
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -154,11 +152,8 @@ export default {
       this.dataForm = {
         id: undefined,
         name: undefined,
-        content: undefined,
-        url: undefined,
-        link: undefined,
-        position: 1,
-        enabled: true
+        NO: undefined,
+        token: getToken()
       }
     },
     handleCreate() {

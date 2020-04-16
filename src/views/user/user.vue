@@ -6,7 +6,7 @@
       <el-input v-model="listQuery.username" clearable class="filter-item" style="width: 200px;" placeholder="请输入用户名"/>
       <el-input v-model="listQuery.mobile" clearable class="filter-item" style="width: 200px;" placeholder="请输入手机号"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
-      <el-button v-permission="['POST /admin/admin/create']" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
       <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button>
     </div>
 
@@ -40,8 +40,8 @@
       </el-table-column> -->
       <el-table-column align="center" width="150px" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-permission="['POST /admin/admin/update']" type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
-          <el-button v-permission="['POST /admin/admin/delete']" type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -160,13 +160,13 @@ export default {
       },
       downloadLoading: false,
       genderDic: ['未知', '男', '女'],
-      levelDic: ['未知', '管理员', '订单员', '发货员', '用户'],
+      levelDic: ['未知', '超级管理员', '仓库管理员', '业务员', '业务管理员'],
       statusDic: ['注销', '可用', '禁用'],
       roleOptions: [
-        { id: 1, text: '管理员' },
-        { id: 2, text: '订单员' },
-        { id: 3, text: '发货员' },
-        { id: 4, text: '用户' }
+        { id: 1, text: '超级管理员' },
+        { id: 2, text: '仓库管理员' },
+        { id: 3, text: '业务员' },
+        { id: 4, text: '业务管理员' }
       ]
     }
   },

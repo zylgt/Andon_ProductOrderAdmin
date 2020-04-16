@@ -8,7 +8,7 @@
       <!-- <el-select v-model="listQuery.orderStatusArray" multiple style="width: 200px" class="filter-item" placeholder="请选择订单状态">
         <el-option v-for="(key, value) in statusMap" :key="key" :label="key" :value="value"/>
       </el-select> -->
-      <el-button v-permission="['GET /admin/order/list']" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
       <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button>
     </div>
 
@@ -60,8 +60,7 @@
       <!-- <el-table-column align="center" label="物流渠道" prop="logistics_company_name"/> -->
       <el-table-column align="center" label="操作" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <!-- <el-button v-permission="['GET /admin/order/detail']" type="primary" size="mini" @click="handleDetail(scope.row)">详情</el-button> -->
-          <el-button v-if="scope.row.status==1" type="primary" size="mini" @click="handleCheck(scope.row)">审核</el-button>
+          <el-button v-permission="['POST /admin/order/check']" v-if="scope.row.status==1" type="primary" size="mini" @click="handleCheck(scope.row)">审核</el-button>
           <el-button v-if="scope.row.status>1" type="primary" size="mini" @click="handleShip(scope.row)">物流</el-button>
         </template>
       </el-table-column>
@@ -178,6 +177,7 @@
 import { detailOrder, listOrder, refundOrder, shipOrder, checkOrder } from '@/api/order'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import checkPermission from '@/utils/permission' // 权限判断函数
+import { getToken } from '@/utils/auth'
 
 const statusMap = {
   1: '待审核',
@@ -228,6 +228,7 @@ export default {
         id: undefined,
         name: undefined,
         orderStatusArray: [],
+        token: getToken(),
         sort: 'add_time',
         order: 'desc'
       },
