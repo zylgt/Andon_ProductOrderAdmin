@@ -18,11 +18,11 @@
       </el-table-column>
       <el-table-column align="center" label="说明" prop="description"/>
       <!-- <el-table-column align="center" label="文件路径" prop="url"/> -->
-      <el-table-column align="center" property="url" label="图片">
+      <!-- <el-table-column align="center" property="url" label="图片">
         <template slot-scope="scope">
           <img :src="scope.row.url" width="40">
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -105,7 +105,7 @@
 
 <script>
 import { listRole, createRole, updateRole, deleteRole, updatePermission } from '@/api/role'
-import { uploadPath } from '@/api/storage'
+import { createStorage, uploadPath } from '@/api/storage'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -129,6 +129,7 @@ export default {
       },
       dataForm: {
         id: undefined,
+        urlList: [],
         title: undefined,
         description: undefined
       },
@@ -181,11 +182,26 @@ export default {
           this.listLoading = false
         })
     },
-    onRemoveUpload() {
-
+    uploadFileNow(file, name) {
+      const formData = new FormData()
+      formData.append(name, file)
+      createStorage(formData).then(res => {
+        console.log('res.data.data.url', res.data.data.url)
+        this.dataForm.urlList.push(res.data.data.url)
+        this.fileList.push({ name: '', url: res.data.data.url })
+      }).catch(() => {
+        console.log('上传失败，请重新上传')
+      })
+    },
+    onRemoveUpload(file) {
+      const urlList = this.dataForm.urlList
+      urlList.splice(file.url.indexOf(urlList), 1)
+      const fileList = this.fileList
+      fileList.splice(file.url.indexOf(urlList), 1)
+      console.log(this.fileList)
     },
     onUploadChange(file) {
-      this.uploadPic = file
+      this.uploadFileNow(file.raw, 'img_url')
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -194,6 +210,7 @@ export default {
     resetForm() {
       this.dataForm = {
         id: undefined,
+        urlList: [],
         title: undefined,
         description: undefined
       }
@@ -211,14 +228,15 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           this.createBtnDisabled = true
-          const formData = new FormData()
-          Object.keys(this.dataForm).forEach((key) => {
-            formData.append(key, this.dataForm[key])
-          })
-          formData.append('uploadPic', this.uploadPic.raw)
+          // const formData = new FormData()
+          // Object.keys(this.dataForm).forEach((key) => {
+          //   formData.append(key, this.dataForm[key])
+          // })
+          // formData.append('uploadPic', this.uploadPic.raw)
           setTimeout(() => {
-            createRole(formData)
+            createRole(this.dataForm)
               .then(response => {
+                this.resetForm()
                 this.createBtnDisabled = false
                 this.list.unshift(response.data.data)
                 this.dialogFormVisible = false
@@ -228,6 +246,7 @@ export default {
                 })
               })
               .catch(response => {
+                this.resetForm()
                 this.createBtnDisabled = false
                 this.$notify.error({
                   title: '失败',
@@ -240,7 +259,42 @@ export default {
     },
     handleUpdate(row) {
       this.dataForm = Object.assign({}, row)
-      this.fileList = [{ name: '', url: row.url }]
+      console.log(row)
+      this.fileList = []
+      this.dataForm.urlList = []
+      if (row.url1) {
+        this.fileList.push({ name: '', url: row.url1 })
+        this.dataForm.urlList.push(row.url1)
+      }
+      if (row.url2) {
+        this.fileList.push({ name: '', url: row.url2 })
+        this.dataForm.urlList.push(row.url2)
+      }
+      if (row.url3) {
+        this.fileList.push({ name: '', url: row.url3 })
+        this.dataForm.urlList.push(row.url3)
+      }
+      if (row.url4) {
+        this.fileList.push({ name: '', url: row.url4 })
+        this.dataForm.urlList.push(row.url4)
+      }
+      if (row.url5) {
+        this.fileList.push({ name: '', url: row.url5 })
+        this.dataForm.urlList.push(row.url5)
+      }
+      if (row.url6) {
+        this.fileList.push({ name: '', url: row.url6 })
+        this.dataForm.urlList.push(row.url6)
+      }
+      if (row.url7) {
+        this.fileList.push({ name: '', url: row.url7 })
+        this.dataForm.urlList.push(row.url7)
+      }
+      if (row.url8) {
+        this.fileList.push({ name: '', url: row.url8 })
+        this.dataForm.urlList.push(row.url8)
+      }
+      // this.fileList = [{ name: '', url: row.url }]
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -251,19 +305,18 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           this.updateBtnDisabled = true
-          const formData = new FormData()
-          Object.keys(this.dataForm).forEach((key) => {
-            formData.append(key, this.dataForm[key])
-          })
-          formData.append('uploadPic', this.uploadPic.raw)
+          // const formData = new FormData()
+          // Object.keys(this.dataForm).forEach((key) => {
+          //   formData.append(key, this.dataForm[key])
+          // })
+          // formData.append('uploadPic', this.uploadPic.raw)
           setTimeout(() => {
-            updateRole(formData)
+            updateRole(this.dataForm)
               .then((response) => {
                 this.updateBtnDisabled = false
                 for (const v of this.list) {
                   if (v.id === this.dataForm.id) {
                     const index = this.list.indexOf(v)
-                    this.dataForm.url = response.data.data.url
                     this.list.splice(index, 1, this.dataForm)
                     break
                   }
@@ -273,6 +326,7 @@ export default {
                   title: '成功',
                   message: '更新管理员成功'
                 })
+                location.reload()
               })
               .catch(response => {
                 this.updateBtnDisabled = false
