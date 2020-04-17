@@ -42,7 +42,8 @@
 
       <el-table-column align="center" label="订单状态" prop="status">
         <template slot-scope="scope">
-          <el-tag>{{ scope.row.status | orderStatusFilter }}</el-tag>
+          <!-- <el-tag>{{ scope.row.status | orderStatusFilter }}</el-tag> -->
+          {{ scope.row.status | orderStatusFilter }}
         </template>
       </el-table-column>
 
@@ -54,7 +55,8 @@
       <el-table-column align="center" label="物流单号" prop="logistics_no"/>
       <el-table-column align="center" label="物流渠道" prop="logistics_company_name">
         <template v-if="scope.row.logistics_company_name!=null" slot-scope="scope">
-          <el-tag>{{ scope.row.logistics_company_name | logisticFilter }}</el-tag>
+          <!-- <el-tag>{{ scope.row.logistics_company_name | logisticFilter }}</el-tag> -->
+          {{ scope.row.logistics_company_name | logisticFilter }}
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="物流渠道" prop="logistics_company_name"/> -->

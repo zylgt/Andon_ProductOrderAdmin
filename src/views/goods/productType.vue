@@ -27,7 +27,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="类别名称" prop="text">
-          <el-input v-model="dataForm.text"/>
+          <el-input v-model.trim="dataForm.text"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -36,7 +36,14 @@
         <el-button v-else type="primary" @click="updateData">确定</el-button>
       </div>
     </el-dialog>
-
+    <!-- 确认删除对话框 -->
+    <el-dialog :title="textTips" :visible.sync="dialogDeleteVisible" width="30%">
+      <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeleteVisible = false">取消</el-button>
+        <el-button type="primary" @click="deleteData">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -99,13 +106,16 @@ export default {
         enabled: true
       },
       dialogFormVisible: false,
+      textTips: '提示',
+      dialogDeleteVisible: false,
+      deleteRow: 0,
       dialogStatus: '',
       textMap: {
         update: '编辑',
         create: '创建'
       },
       rules: {
-        name: [
+        text: [
           { required: true, message: '类别名称不能为空', trigger: 'blur' }
         ]
       },
@@ -229,7 +239,30 @@ export default {
         }
       })
     },
+    // handleDelete(row) {
+    //   deleteProductType(row)
+    //     .then(response => {
+    //       this.$notify.success({
+    //         title: '成功',
+    //         message: '删除成功'
+    //       })
+    //       const index = this.list.indexOf(row)
+    //       this.list.splice(index, 1)
+    //     })
+    //     .catch(response => {
+    //       this.$notify.error({
+    //         title: '失败',
+    //         message: response.data.errmsg
+    //       })
+    //     })
+    // },
     handleDelete(row) {
+      this.deleteRow = row
+      this.dialogDeleteVisible = true
+    },
+    deleteData() {
+      this.deleteBtnDisabled = true
+      const row = this.deleteRow
       deleteProductType(row)
         .then(response => {
           this.$notify.success({
@@ -238,12 +271,14 @@ export default {
           })
           const index = this.list.indexOf(row)
           this.list.splice(index, 1)
+          this.dialogDeleteVisible = false
         })
         .catch(response => {
           this.$notify.error({
             title: '失败',
             message: response.data.errmsg
           })
+          this.dialogDeleteVisible = false
         })
     },
     handleDownload() {

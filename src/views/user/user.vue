@@ -29,7 +29,8 @@
       <el-table-column align="center" label="代理商号" prop="agent_no"/>
       <el-table-column align="center" label="用户角色" prop="role">
         <template slot-scope="scope">
-          <el-tag >{{ levelDic[scope.row.role] }}</el-tag>
+          <!-- <el-tag >{{ levelDic[scope.row.role] }}</el-tag> -->
+          {{ levelDic[scope.row.role] }}
         </template>
       </el-table-column>
 

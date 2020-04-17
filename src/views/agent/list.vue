@@ -30,10 +30,10 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="渠道名称" prop="name">
-          <el-input v-model="dataForm.name"/>
+          <el-input v-model.trim="dataForm.name"/>
         </el-form-item>
-        <el-form-item label="渠道编号" prop="content">
-          <el-input v-model="dataForm.NO"/>
+        <el-form-item label="渠道编号" prop="NO">
+          <el-input v-model.trim="dataForm.NO"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -42,7 +42,14 @@
         <el-button v-else type="primary" @click="updateData">确定</el-button>
       </div>
     </el-dialog>
-
+    <!-- 确认删除对话框 -->
+    <el-dialog :title="textTips" :visible.sync="dialogDeleteVisible" width="30%">
+      <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeleteVisible = false">取消</el-button>
+        <el-button type="primary" @click="deleteData">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -103,6 +110,9 @@ export default {
         token: getToken()
       },
       dialogFormVisible: false,
+      textTips: '提示',
+      dialogDeleteVisible: false,
+      deleteRow: 0,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -233,7 +243,30 @@ export default {
         }
       })
     },
+    // handleDelete(row) {
+    //   deleteAgent(row)
+    //     .then(response => {
+    //       this.$notify.success({
+    //         title: '成功',
+    //         message: '删除成功'
+    //       })
+    //       const index = this.list.indexOf(row)
+    //       this.list.splice(index, 1)
+    //     })
+    //     .catch(response => {
+    //       this.$notify.error({
+    //         title: '失败',
+    //         message: response.data.errmsg
+    //       })
+    //     })
+    // },
     handleDelete(row) {
+      this.deleteRow = row
+      this.dialogDeleteVisible = true
+    },
+    deleteData() {
+      this.deleteBtnDisabled = true
+      const row = this.deleteRow
       deleteAgent(row)
         .then(response => {
           this.$notify.success({
@@ -242,12 +275,14 @@ export default {
           })
           const index = this.list.indexOf(row)
           this.list.splice(index, 1)
+          this.dialogDeleteVisible = false
         })
         .catch(response => {
           this.$notify.error({
             title: '失败',
             message: response.data.errmsg
           })
+          this.dialogDeleteVisible = false
         })
     },
     handleDownload() {

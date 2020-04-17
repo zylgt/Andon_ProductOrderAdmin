@@ -13,7 +13,8 @@
       <el-table-column align="center" label="文件名称" prop="title"/>
       <el-table-column align="center" label="文件类型" prop="type">
         <template slot-scope="scope">
-          <el-tag>{{ scope.row.name }}</el-tag>
+          <!-- <el-tag>{{ scope.row.name }}</el-tag> -->
+          {{ scope.row.name }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="说明" prop="description"/>

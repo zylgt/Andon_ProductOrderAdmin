@@ -37,7 +37,7 @@
           <el-input v-model="dataForm.original_price" :disabled="true"/>
         </el-form-item>
         <el-form-item label="特价" prop="current_price">
-          <el-input v-model="dataForm.current_price"/>
+          <el-input-number v-model="dataForm.current_price" :min="0" placeholder="0.00"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -46,7 +46,14 @@
         <el-button v-else type="primary" @click="updateData">确定</el-button>
       </div>
     </el-dialog>
-
+    <!-- 确认删除对话框 -->
+    <el-dialog :title="textTips" :visible.sync="dialogDeleteVisible" width="30%">
+      <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeleteVisible = false">取消</el-button>
+        <el-button type="primary" @click="deleteData">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -109,6 +116,9 @@ export default {
         current_price: undefined
       },
       dialogFormVisible: false,
+      textTips: '提示',
+      dialogDeleteVisible: false,
+      deleteRow: 0,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -247,7 +257,31 @@ export default {
         }
       })
     },
+    // handleDelete(row) {
+    //   deletePrice(row)
+    //     .then(response => {
+    //       this.$notify.success({
+    //         title: '成功',
+    //         message: '删除成功'
+    //       })
+    //       location.reload()
+    //       // const index = this.list.indexOf(row)
+    //       // this.list.splice(index, 1)
+    //     })
+    //     .catch(response => {
+    //       this.$notify.error({
+    //         title: '失败',
+    //         message: response.data.errmsg
+    //       })
+    //     })
+    // },
     handleDelete(row) {
+      this.deleteRow = row
+      this.dialogDeleteVisible = true
+    },
+    deleteData() {
+      this.deleteBtnDisabled = true
+      const row = this.deleteRow
       deletePrice(row)
         .then(response => {
           this.$notify.success({
@@ -257,12 +291,15 @@ export default {
           location.reload()
           // const index = this.list.indexOf(row)
           // this.list.splice(index, 1)
+          this.dialogDeleteVisible = false
         })
         .catch(response => {
           this.$notify.error({
             title: '失败',
             message: response.data.errmsg
           })
+          location.reload()
+          this.dialogDeleteVisible = false
         })
     },
     handleDetail(row) {
