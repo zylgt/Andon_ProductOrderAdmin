@@ -127,6 +127,9 @@ export default {
       rules: {
         current_price: [
           { required: true, message: '特价不能为空', trigger: 'blur' }
+        ],
+        product_id: [
+          { required: true, message: '商品不能为空', trigger: 'blur' }
         ]
       },
       downloadLoading: false

@@ -53,7 +53,8 @@
             :auto-upload="false"
             :on-remove="onRemoveUpload"
             :on-change="onUploadChange"
-            :limit="8"
+            :limit="9"
+            :on-exceed="handleExceed"
             :file-list="fileList"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
@@ -100,6 +101,13 @@
         <el-button :disabled="deleteBtnDisabled" type="primary" @click="deleteData">确定</el-button>
       </div>
     </el-dialog>
+    <!-- 对话框 -->
+    <el-dialog :title="textTips" :visible.sync="dialogEnoughVisible" width="30%">
+      <span style="font-size:20px;margin-left:30px;">图片已够9张，不可继续添加</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="enough">确定</el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
@@ -135,6 +143,7 @@ export default {
         description: undefined
       },
       dialogFormVisible: false,
+      dialogEnoughVisible: false,
       textTips: '提示',
       dialogDeleteVisible: false,
       deleteRow: 0,
@@ -203,6 +212,12 @@ export default {
     },
     onUploadChange(file) {
       this.uploadFileNow(file.raw, 'img_url')
+    },
+    handleExceed() {
+      this.dialogEnoughVisible = true
+    },
+    enough() {
+      this.dialogEnoughVisible = false
     },
     handleFilter() {
       this.listQuery.page = 1

@@ -127,6 +127,7 @@ export const asyncRouterMap = [
       },
       {
         path: 'price',
+        hidden: true,
         component: () => import('@/views/agent/price'),
         name: 'price',
         meta: {

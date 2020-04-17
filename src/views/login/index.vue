@@ -134,7 +134,8 @@ export default {
           this.loading = true
           this.$store.dispatch('LoginByCode', this.loginForm).then(() => {
             this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
+            // this.$router.push({ path: this.redirect || '/' })
+            this.$router.push({ path: '/' })
           }).catch(response => {
             console.log('respxxxx', response)
             this.$notify.error({
