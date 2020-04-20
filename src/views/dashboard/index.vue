@@ -1,7 +1,20 @@
 <template>
   <div class="dashboard-editor-container">
-
-    <el-row :gutter="40" class="panel-group">
+    <el-card element-loading-text="正在新增中。。。" class="box-card">
+      <h3>用户信息</h3>
+      <el-form ref="user" :model="user" label-width="150px">
+        <el-form-item label="用户名" prop="username">
+          {{ user.username }}
+        </el-form-item>
+        <el-form-item label="手机号码" prop="mobile">
+          {{ user.mobile }}
+        </el-form-item>
+        <el-form-item label="角色" prop="role">
+          {{ user.role==1?"超级管理员":user.role==2?"仓库管理员":user.role==3?"业务员":"业务管理员" }}
+        </el-form-item>
+      </el-form>
+    </el-card>
+    <!-- <el-row :gutter="40" class="panel-group">
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
         <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
           <div class="card-panel-icon-wrapper icon-people">
@@ -46,13 +59,14 @@
           </div>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
   </div>
 </template>
 
 <script>
 import { info } from '@/api/dashboard'
 import CountTo from 'vue-count-to'
+import { getToken } from '@/utils/auth'
 
 export default {
   components: {
@@ -63,15 +77,17 @@ export default {
       userTotal: 0,
       productTotal: 0,
       fileTotal: 0,
-      orderTotal: 0
+      orderTotal: 0,
+      user: {}
     }
   },
   created() {
-    info().then(response => {
+    info({ token: getToken() }).then(response => {
       this.userTotal = response.data.data.userTotal
       this.productTotal = response.data.data.productTotal
       this.fileTotal = response.data.data.fileTotal
       this.orderTotal = response.data.data.orderTotal
+      this.user = response.data.data.user
     })
   },
   methods: {

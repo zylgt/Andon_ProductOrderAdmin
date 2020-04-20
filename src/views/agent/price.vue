@@ -86,6 +86,7 @@
 <script>
 import { listPrice, createPrice, updatePrice, deletePrice } from '@/api/agent'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { getToken } from '@/utils/auth'
 
 export default {
   name: 'Price',
@@ -105,6 +106,7 @@ export default {
         name: undefined,
         type: undefined,
         status: undefined,
+        token: getToken(),
         sort: 'add_time',
         order: 'desc'
       },
@@ -164,6 +166,10 @@ export default {
           this.list = []
           this.total = 0
           this.listLoading = false
+          this.$notify.error({
+            title: '失败',
+            message: '参数不符'
+          })
         })
     },
     handleFilter() {
