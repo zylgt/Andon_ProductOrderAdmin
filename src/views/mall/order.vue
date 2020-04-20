@@ -49,9 +49,15 @@
 
       <el-table-column align="center" label="订单金额" prop="total_price"/>
 
-      <el-table-column align="center" min-width="120" label="下单时间" prop="create_time"/>
-      <el-table-column align="center" min-width="120" label="发货时间" prop="send_time"/>
-
+      <el-table-column align="center" min-width="100" label="下单时间" prop="create_time"/>
+      <el-table-column align="center" min-width="100" label="发货时间" prop="send_time"/>
+      <el-table-column align="center" min-width="110" label="预约发货时间" prop="schedule_delivery_date"/>
+      <el-table-column align="center" label="配送方式" prop="shipping_method">
+        <template slot-scope="scope">
+          <!-- <el-tag>{{ scope.row.status | orderStatusFilter }}</el-tag> -->
+          {{ scope.row.shipping_method | shippingMethodFilter }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="物流单号" prop="logistics_no"/>
       <el-table-column align="center" label="物流渠道" prop="logistics_company_name">
         <template v-if="scope.row.logistics_company_name!=null" slot-scope="scope">
@@ -63,7 +69,7 @@
       <el-table-column align="center" label="操作" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button v-permission="['POST /admin/order/check']" v-if="scope.row.status==1" type="primary" size="mini" @click="handleCheck(scope.row)">审核</el-button>
-          <el-button v-if="scope.row.status>1" type="primary" size="mini" @click="handleShip(scope.row)">物流</el-button>
+          <el-button v-if="scope.row.status>1&&scope.row.shipping_method!=1" type="primary" size="mini" @click="handleShip(scope.row)">物流</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -194,6 +200,10 @@ const logisticMap = {
   3: '圆通速递',
   4: '中通快递'
 }
+const shippingMethodMap = {
+  1: '自提',
+  2: '物流'
+}
 
 export default {
   name: 'Order',
@@ -204,6 +214,9 @@ export default {
     },
     logisticFilter(status) {
       return logisticMap[status]
+    },
+    shippingMethodFilter(status) {
+      return shippingMethodMap[status]
     }
   },
   data() {
@@ -221,6 +234,10 @@ export default {
         { id: 2, text: '顺丰速运' },
         { id: 3, text: '圆通速递' },
         { id: 4, text: '中通快递' }
+      ],
+      shippingMethodList: [
+        { id: 1, text: '自提' },
+        { id: 2, text: '物流' }
       ],
       total: 0,
       listLoading: true,
