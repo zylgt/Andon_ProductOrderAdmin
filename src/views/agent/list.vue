@@ -14,6 +14,9 @@
       <el-table-column align="center" label="渠道名称" prop="name"/>
 
       <el-table-column align="center" label="渠道编号" prop="NO"/>
+      <el-table-column align="center" label="收货人姓名" prop="receiver_name"/>
+      <el-table-column align="center" label="收货人电话" prop="receiver_mobile"/>
+      <el-table-column align="center" label="地址" prop="receiver_address"/>
 
       <el-table-column align="center" label="操作" width="400" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -34,6 +37,15 @@
         </el-form-item>
         <el-form-item label="渠道编号" prop="NO">
           <el-input v-model.trim="dataForm.NO"/>
+        </el-form-item>
+        <el-form-item label="收货人姓名" prop="receiver_name">
+          <el-input v-model="dataForm.receiver_name"/>
+        </el-form-item>
+        <el-form-item label="收货人电话" prop="receiver_mobile">
+          <el-input v-model="dataForm.receiver_mobile"/>
+        </el-form-item>
+        <el-form-item label="收货地址" prop="receiver_address">
+          <el-input v-model="dataForm.receiver_address"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -124,6 +136,15 @@ export default {
         ],
         NO: [
           { required: true, message: '渠道编号不能为空', trigger: 'blur' }
+        ],
+        receiver_name: [
+          { required: true, message: '收货人姓名不能为空', trigger: 'blur' }
+        ],
+        receiver_mobile: [
+          { required: true, message: '收货人联系方式不能为空', trigger: 'blur' }
+        ],
+        receiver_address: [
+          { required: true, message: '收货人地址不能为空', trigger: 'blur' }
         ]
       },
       downloadLoading: false
