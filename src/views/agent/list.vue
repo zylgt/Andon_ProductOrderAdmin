@@ -39,13 +39,13 @@
           <el-input v-model.trim="dataForm.NO"/>
         </el-form-item>
         <el-form-item label="收货人姓名" prop="receiver_name">
-          <el-input v-model="dataForm.receiver_name"/>
+          <el-input v-model.trim="dataForm.receiver_name"/>
         </el-form-item>
         <el-form-item label="收货人电话" prop="receiver_mobile">
-          <el-input v-model="dataForm.receiver_mobile"/>
+          <el-input v-model.trim="dataForm.receiver_mobile"/>
         </el-form-item>
         <el-form-item label="收货地址" prop="receiver_address">
-          <el-input v-model="dataForm.receiver_address"/>
+          <el-input v-model.trim="dataForm.receiver_address"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
