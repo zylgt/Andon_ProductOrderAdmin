@@ -5,9 +5,9 @@
     <div class="filter-container">
       <!-- <el-input v-model="listQuery.user_id" clearable class="filter-item" style="width: 200px;" placeholder="请输入用户ID"/> -->
       <el-input v-model="listQuery.order_no" clearable class="filter-item" style="width: 200px;" placeholder="请输入订单编号"/>
-      <!-- <el-select v-model="listQuery.orderStatusArray" multiple style="width: 200px" class="filter-item" placeholder="请选择订单状态">
-        <el-option v-for="(key, value) in statusMap" :key="key" :label="key" :value="value"/>
-      </el-select> -->
+      <el-select v-permission="['POST /admin/order/selectuser']" v-model="listQuery.user" style="width: 200px" class="filter-item" placeholder="请选择业务员">
+        <el-option v-for="item in users" :key="item.id" :label="item.username" :value="item.id"/>
+      </el-select>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
       <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button>
     </div>
@@ -222,6 +222,7 @@ export default {
   data() {
     return {
       list: [],
+      users: [],
       statusList: [
         { id: 1, text: '待审核' },
         { id: 2, text: '待发货' },
@@ -247,6 +248,7 @@ export default {
         id: undefined,
         name: undefined,
         orderStatusArray: [],
+        user: [],
         token: getToken(),
         sort: 'add_time',
         order: 'desc'
@@ -287,6 +289,7 @@ export default {
       listOrder(this.listQuery).then(response => {
         this.list = response.data.data.list
         this.total = response.data.data.total
+        this.users = response.data.data.users
         this.listLoading = false
       }).catch(() => {
         this.list = []

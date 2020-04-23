@@ -4,6 +4,7 @@
     <!-- 查询和其他操作 -->
     <div class="filter-container">
       <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
+      <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button>
     </div>
 
     <!-- 查询结果 -->
@@ -310,24 +311,20 @@ export default {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = [
-          '广告ID',
-          '广告标题',
-          '广告内容',
-          '广告图片',
-          '广告位置',
-          '活动链接',
-          '是否启用'
+          '渠道名称',
+          '渠道编号',
+          '收货人姓名',
+          '收货人电话',
+          '收货人地址'
         ]
         const filterVal = [
-          'id',
           'name',
-          'content',
-          'url',
-          'postion',
-          'link',
-          'enabled'
+          'NO',
+          'receiver_name',
+          'receiver_mobile',
+          'receiver_address'
         ]
-        excel.export_json_to_excel2(tHeader, this.list, filterVal, '广告信息')
+        excel.export_json_to_excel2(tHeader, this.list, filterVal, '渠道信息')
         this.downloadLoading = false
       })
     }
