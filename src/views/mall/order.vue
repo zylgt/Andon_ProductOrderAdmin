@@ -222,6 +222,7 @@ export default {
   data() {
     return {
       list: [],
+      all: [],
       users: [],
       statusList: [
         { id: 1, text: '待审核' },
@@ -288,6 +289,7 @@ export default {
       this.listLoading = true
       listOrder(this.listQuery).then(response => {
         this.list = response.data.data.list
+        this.all = response.data.data.all
         this.total = response.data.data.total
         this.users = response.data.data.users
         this.listLoading = false
@@ -405,7 +407,7 @@ export default {
         const tHeader = ['订单编号', '业务员名称', '订单状态', '下单日期', '发货日期', '物流单号（自提为空）', '物流公司', '订单商品数量', '订单商品价格']
         // const tHeader = ['订单ID', '订单编号', '用户ID', '订单状态', '是否删除', '收货人', '收货联系电话', '收货地址']
         const filterVal = ['order_no', 'username', 'status_text', 'create_time', 'send_time', 'logistics_no', 'logistics_company_name_text', 'product_count', 'total_price']
-        excel.export_json_to_excel2(tHeader, this.list, filterVal, '订单信息')
+        excel.export_json_to_excel2(tHeader, this.all, filterVal, '订单信息')
         this.downloadLoading = false
       })
     },
