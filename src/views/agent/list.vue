@@ -105,6 +105,7 @@ export default {
     return {
       uploadPath,
       list: [],
+      all: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -167,6 +168,7 @@ export default {
       listAgent(this.listQuery)
         .then(response => {
           this.list = response.data.data.list
+          this.all = response.data.data.all
           this.total = response.data.data.total
           this.listLoading = false
         })
@@ -324,7 +326,7 @@ export default {
           'receiver_mobile',
           'receiver_address'
         ]
-        excel.export_json_to_excel2(tHeader, this.list, filterVal, '渠道信息')
+        excel.export_json_to_excel2(tHeader, this.all, filterVal, '渠道信息')
         this.downloadLoading = false
       })
     }
