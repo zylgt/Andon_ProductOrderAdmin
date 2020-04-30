@@ -103,7 +103,7 @@
     </el-dialog>
     <!-- 对话框 -->
     <el-dialog :title="textTips" :visible.sync="dialogEnoughVisible" width="30%">
-      <span style="font-size:20px;margin-left:30px;">图片已够9张，不可继续添加</span>
+      <span style="font-size:20px;margin-left:30px;">一次只可选择一张图片</span>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="enough">确定</el-button>
       </div>

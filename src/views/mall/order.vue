@@ -5,6 +5,9 @@
     <div class="filter-container">
       <!-- <el-input v-model="listQuery.user_id" clearable class="filter-item" style="width: 200px;" placeholder="请输入用户ID"/> -->
       <el-input v-model="listQuery.order_no" clearable class="filter-item" style="width: 200px;" placeholder="请输入订单编号"/>
+      <el-select v-model="listQuery.status" style="width: 200px" class="filter-item" placeholder="请选择订单状态">
+        <el-option v-for="item in statusList" :key="item.id" :label="item.text" :value="item.id"/>
+      </el-select>
       <el-select v-permission="['POST /admin/order/selectuser']" v-model="listQuery.user" style="width: 200px" class="filter-item" placeholder="请选择业务员">
         <el-option v-for="item in users" :key="item.id" :label="item.username" :value="item.id"/>
       </el-select>
@@ -225,6 +228,7 @@ export default {
       all: [],
       users: [],
       statusList: [
+        { id: '', text: '全部' },
         { id: 1, text: '待审核' },
         { id: 2, text: '待发货' },
         { id: 3, text: '待收货' },
@@ -248,6 +252,7 @@ export default {
         limit: 20,
         id: undefined,
         name: undefined,
+        status: '',
         orderStatusArray: [],
         user: [],
         token: getToken(),

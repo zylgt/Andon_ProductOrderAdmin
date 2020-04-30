@@ -3,7 +3,7 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
-      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
+      <el-button v-if="fileCount<8" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
     </div>
 
     <!-- 查询结果 -->
@@ -11,11 +11,11 @@
       <el-table-column align="center" label="文件名称" prop="name"/>
       <el-table-column align="center" label="说明" prop="description"/>
       <el-table-column align="center" label="文件路径" prop="url"/>
-      <!-- <el-table-column align="center" property="url" label="图片">
+      <el-table-column align="center" property="url" label="图片预览">
         <template slot-scope="scope">
-          <img :src="scope.row.url" width="40">
+          <img v-if="scope.row.url.indexOf('.pdf')==-1" :src="scope.row.url" width="100">
         </template>
-      </el-table-column> -->
+      </el-table-column>
 
       <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -71,7 +71,7 @@
     </el-dialog>
     <!-- 对话框 -->
     <el-dialog :title="textTips" :visible.sync="dialogEnoughVisible" width="30%">
-      <span style="font-size:20px;margin-left:30px;">图片已够9张，不可继续添加</span>
+      <span style="font-size:20px;margin-left:30px;">一次只可选择一张图片</span>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="enough">确定</el-button>
       </div>
@@ -93,6 +93,7 @@ export default {
       uploadPath,
       list: null,
       total: 0,
+      fileCount: 0,
       uploadPic: [],
       fileList: [],
       picUrl: '',
@@ -127,7 +128,7 @@ export default {
       },
       file_types: [],
       rules: {
-        title: [
+        name: [
           { required: true, message: '文件名称不能为空', trigger: 'blur' }
         ]
       },
@@ -160,6 +161,7 @@ export default {
       listRole(this.listQuery)
         .then(response => {
           this.list = response.data.data.list
+          this.fileCount = response.data.data.list.length
           this.total = response.data.data.total
           this.listLoading = false
         })
@@ -238,6 +240,7 @@ export default {
                   title: '成功',
                   message: '添加文件成功'
                 })
+                location.reload()
               })
               .catch(response => {
                 this.resetForm()
@@ -351,6 +354,7 @@ export default {
             })
             const index = this.list.indexOf(row)
             this.list.splice(index, 1)
+            location.reload()
           })
           .catch(response => {
             this.deleteBtnDisabled = false
