@@ -3,22 +3,14 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
-      <el-input v-model="listQuery.title" clearable class="filter-item" style="width: 200px;" placeholder="请输入文件名称"/>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
-      <!-- <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button> -->
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
     </div>
 
     <!-- 查询结果 -->
-    <el-table v-loading="listLoading" :data="file_types" element-loading-text="正在查询中。。。" border fit highlight-current-row>
-      <el-table-column align="center" label="ID" prop="id"/>
-      <el-table-column align="center" label="文件类型" prop="text">
-        <template slot-scope="scope">
-          <!-- <el-tag>{{ scope.row.name }}</el-tag> -->
-          {{ scope.row.text }}
-        </template>
-      </el-table-column>
-      <!-- <el-table-column align="center" label="说明" prop="description"/> -->
-      <!-- <el-table-column align="center" label="文件路径" prop="url"/> -->
+    <el-table v-loading="listLoading" :data="list" element-loading-text="正在查询中。。。" border fit highlight-current-row>
+      <el-table-column align="center" label="文件名称" prop="name"/>
+      <el-table-column align="center" label="说明" prop="description"/>
+      <el-table-column align="center" label="文件路径" prop="url"/>
       <!-- <el-table-column align="center" property="url" label="图片">
         <template slot-scope="scope">
           <img :src="scope.row.url" width="40">
@@ -27,7 +19,7 @@
 
       <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" style="width:70px;" @click="handleUpdate(scope.row)">编辑文件</el-button>
+          <!-- <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button> -->
           <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -38,13 +30,8 @@
     <!-- 添加或修改对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="文件名称" prop="title">
-          <el-input v-model.trim="dataForm.title"/>
-        </el-form-item>
-        <el-form-item label="所属分类" prop="type">
-          <el-select v-model="dataForm.type">
-            <el-option v-for="item in file_types" :key="item.id" :label="item.text" :value="item.id"/>
-          </el-select>
+        <el-form-item label="文件名称" prop="name">
+          <el-input v-model.trim="dataForm.name"/>
         </el-form-item>
         <el-form-item label="文件">
           <el-upload
@@ -53,7 +40,7 @@
             :auto-upload="false"
             :on-remove="onRemoveUpload"
             :on-change="onUploadChange"
-            :limit="8"
+            :limit="1"
             :on-exceed="handleExceed"
             :file-list="fileList"
             class="avatar-uploader"
@@ -74,25 +61,6 @@
       </div>
     </el-dialog>
 
-    <!-- 权限配置对话框 -->
-    <el-dialog :visible.sync="permissionDialogFormVisible" title="权限配置">
-      <el-tree
-        ref="tree"
-        :data="systemPermissions"
-        :default-checked-keys="assignedPermissions"
-        show-checkbox
-        node-key="id"
-        highlight-current>
-        <span slot-scope="{ node, data }" class="custom-tree-node">
-          <span>{{ data.label }}</span>
-          <el-tag v-if="data.api" type="success" size="mini">{{ data.api }}</el-tag>
-        </span>
-      </el-tree>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="permissionDialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="updatePermission">确定</el-button>
-      </div>
-    </el-dialog>
     <!-- 确认删除对话框 -->
     <el-dialog :title="textTips" :visible.sync="dialogDeleteVisible" width="30%">
       <span style="font-size:20px;margin-left:30px;">是否确定删除？</span>
@@ -132,14 +100,16 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        title: undefined,
+        product_id: '',
+        name: undefined,
         sort: 'add_time',
         order: 'description'
       },
       dataForm: {
         id: undefined,
+        product_id: '',
         urlList: [],
-        title: undefined,
+        name: undefined,
         description: undefined
       },
       dialogFormVisible: false,
@@ -159,9 +129,6 @@ export default {
       rules: {
         title: [
           { required: true, message: '文件名称不能为空', trigger: 'blur' }
-        ],
-        type: [
-          { required: true, message: '文件类型不能为空', trigger: 'blur' }
         ]
       },
       permissionDialogFormVisible: false,
@@ -174,15 +141,25 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.init()
   },
   methods: {
+    init: function() {
+      if (this.$route.query.id == null) {
+        return
+      }
+      const product_id = this.$route.query.id
+      console.log('product_id', product_id)
+      this.listQuery.product_id = product_id
+      this.dataForm.product_id = product_id
+      this.listLoading = true
+      this.getList()
+    },
     getList() {
       this.listLoading = true
       listRole(this.listQuery)
         .then(response => {
           this.list = response.data.data.list
-          this.file_types = response.data.data.file_types
           this.total = response.data.data.total
           this.listLoading = false
         })
@@ -227,6 +204,7 @@ export default {
       this.dataForm = {
         id: undefined,
         urlList: [],
+        product_id: this.$route.query.id,
         title: undefined,
         description: undefined
       }
@@ -274,49 +252,48 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/sys/fileedit', query: { id: row.id }})
-      // this.dataForm = Object.assign({}, row)
-      // console.log(row)
-      // this.fileList = []
-      // this.dataForm.urlList = []
-      // if (row.url1) {
-      //   this.fileList.push({ name: '', url: row.url1 })
-      //   this.dataForm.urlList.push(row.url1)
-      // }
-      // if (row.url2) {
-      //   this.fileList.push({ name: '', url: row.url2 })
-      //   this.dataForm.urlList.push(row.url2)
-      // }
-      // if (row.url3) {
-      //   this.fileList.push({ name: '', url: row.url3 })
-      //   this.dataForm.urlList.push(row.url3)
-      // }
-      // if (row.url4) {
-      //   this.fileList.push({ name: '', url: row.url4 })
-      //   this.dataForm.urlList.push(row.url4)
-      // }
-      // if (row.url5) {
-      //   this.fileList.push({ name: '', url: row.url5 })
-      //   this.dataForm.urlList.push(row.url5)
-      // }
-      // if (row.url6) {
-      //   this.fileList.push({ name: '', url: row.url6 })
-      //   this.dataForm.urlList.push(row.url6)
-      // }
-      // if (row.url7) {
-      //   this.fileList.push({ name: '', url: row.url7 })
-      //   this.dataForm.urlList.push(row.url7)
-      // }
-      // if (row.url8) {
-      //   this.fileList.push({ name: '', url: row.url8 })
-      //   this.dataForm.urlList.push(row.url8)
-      // }
-      // // this.fileList = [{ name: '', url: row.url }]
-      // this.dialogStatus = 'update'
-      // this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
+      this.dataForm = Object.assign({}, row)
+      console.log(row)
+      this.fileList = []
+      this.dataForm.urlList = []
+      if (row.url1) {
+        this.fileList.push({ name: '', url: row.url1 })
+        this.dataForm.urlList.push(row.url1)
+      }
+      if (row.url2) {
+        this.fileList.push({ name: '', url: row.url2 })
+        this.dataForm.urlList.push(row.url2)
+      }
+      if (row.url3) {
+        this.fileList.push({ name: '', url: row.url3 })
+        this.dataForm.urlList.push(row.url3)
+      }
+      if (row.url4) {
+        this.fileList.push({ name: '', url: row.url4 })
+        this.dataForm.urlList.push(row.url4)
+      }
+      if (row.url5) {
+        this.fileList.push({ name: '', url: row.url5 })
+        this.dataForm.urlList.push(row.url5)
+      }
+      if (row.url6) {
+        this.fileList.push({ name: '', url: row.url6 })
+        this.dataForm.urlList.push(row.url6)
+      }
+      if (row.url7) {
+        this.fileList.push({ name: '', url: row.url7 })
+        this.dataForm.urlList.push(row.url7)
+      }
+      if (row.url8) {
+        this.fileList.push({ name: '', url: row.url8 })
+        this.dataForm.urlList.push(row.url8)
+      }
+      // this.fileList = [{ name: '', url: row.url }]
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     updateData() {
       this.$refs['dataForm'].validate(valid => {

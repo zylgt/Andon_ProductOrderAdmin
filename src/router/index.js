@@ -258,6 +258,17 @@ export const asyncRouterMap = [
           title: '文件管理',
           noCache: true
         }
+      },
+      {
+        path: 'fileedit',
+        hidden: true,
+        component: () => import('@/views/sys/fileedit'),
+        name: 'fileedit',
+        meta: {
+          perms: ['GET /admin/file/list'],
+          title: '文件管理',
+          noCache: true
+        }
       }
     ]
   },
