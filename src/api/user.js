@@ -1,5 +1,11 @@
 import request from '@/utils/request'
 
+export function getAllUser() {
+  return request({
+    url: '/user/api/getAllUser',
+    method: 'post'
+  })
+}
 export function fetchList(query) {
   return request({
     url: '/user/api/list',

@@ -229,6 +229,52 @@ export const asyncRouterMap = [
   },
 
   {
+    path: '/back',
+    component: Layout,
+    redirect: 'noredirect',
+    alwaysShow: true,
+    name: 'backManage',
+    meta: {
+      title: '退货管理',
+      icon: 'icon'
+    },
+    children: [
+      {
+        path: 'back',
+        component: () => import('@/views/back/back'),
+        name: 'back',
+        meta: {
+          perms: ['GET /admin/back/list'],
+          title: '退货管理',
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/bill',
+    component: Layout,
+    redirect: 'noredirect',
+    alwaysShow: true,
+    name: 'billManage',
+    meta: {
+      title: '台账管理',
+      icon: 'icon'
+    },
+    children: [
+      {
+        path: 'bill',
+        component: () => import('@/views/bill/bill'),
+        name: 'bill',
+        meta: {
+          perms: ['GET /admin/bill/list'],
+          title: '台账管理',
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
     path: '/sys',
     component: Layout,
     redirect: 'noredirect',
