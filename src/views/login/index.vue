@@ -132,10 +132,16 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid && !this.loading) {
           this.loading = true
-          this.$store.dispatch('LoginByCode', this.loginForm).then(() => {
+          this.$store.dispatch('LoginByCode', this.loginForm).then((response) => {
             this.loading = false
-            // this.$router.push({ path: this.redirect || '/' })
-            this.$router.push({ path: '/' })
+            if (response.data.data.role === 2 || response.data.data.role === 3) {
+              this.$notify.error({
+                title: '失败',
+                message: '没有权限登录管理后台'
+              })
+            } else {
+              this.$router.push({ path: '/' })
+            }
           }).catch(response => {
             console.log('respxxxx', response)
             this.$notify.error({

@@ -15,6 +15,7 @@
       <el-table-column align="center" label="渠道名称" prop="name"/>
 
       <el-table-column align="center" label="渠道编号" prop="NO"/>
+      <el-table-column align="center" label="业务员名称" prop="NO"/>
       <el-table-column align="center" label="收货人姓名" prop="receiver_name"/>
       <el-table-column align="center" label="收货人电话" prop="receiver_mobile"/>
       <el-table-column align="center" label="地址" prop="receiver_address"/>
@@ -33,6 +34,11 @@
     <!-- 添加或修改对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="业务员名称" prop="name">
+          <el-select v-permission="['POST /admin/order/selectuser']" v-model.trim="dataForm.token" class="filter-item" placeholder="请选择业务员">
+            <el-option v-for="item in userList" :key="item.id" :label="item.username" :value="item.id"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="渠道名称" prop="name">
           <el-input v-model.trim="dataForm.name"/>
         </el-form-item>
@@ -74,6 +80,9 @@
   position: relative;
   overflow: hidden;
 }
+.el-select{
+  width:100%;
+}
 .avatar-uploader .el-upload:hover {
   border-color: #20a0ff;
 }
@@ -94,6 +103,7 @@
 
 <script>
 import { listAgent, createAgent, updateAgent, deleteAgent } from '@/api/agent'
+import { getAllUser } from '@/api/user'
 import { uploadPath } from '@/api/storage'
 import { getToken } from '@/utils/auth'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
@@ -106,6 +116,7 @@ export default {
       uploadPath,
       list: [],
       all: [],
+      userList: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -161,6 +172,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getUser()
   },
   methods: {
     getList() {
@@ -177,6 +189,12 @@ export default {
           this.total = 0
           this.listLoading = false
         })
+    },
+    getUser() {
+      getAllUser().then(response => {
+        this.userList = response.data.data
+      }).catch((response) => {
+      })
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -211,6 +229,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
+          this.dataForm.token = this.dataForm.token.toString()
           createAgent(this.dataForm)
             .then(response => {
               this.list.unshift(response.data.data)

@@ -8,7 +8,7 @@
         <el-option v-for="item in statusList" :key="item.id" :label="item.text" :value="item.id"/>
       </el-select>
       <el-select v-permission="['POST /admin/order/selectuser']" v-model="listQuery.operator_id" style="width: 200px" class="filter-item" placeholder="请选择业务员">
-        <el-option v-for="item in users" :key="item.id" :label="item.username" :value="item.id"/>
+        <el-option v-for="item in userList" :key="item.id" :label="item.username" :value="item.id"/>
       </el-select>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
       <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { listRefund } from '@/api/orderFlow'
+import { listRefund, listRefundExport } from '@/api/orderFlow'
 import { getAllUser } from '@/api/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import checkPermission from '@/utils/permission' // 权限判断函数
@@ -65,7 +65,7 @@ export default {
     return {
       list: [],
       all: [],
-      users: [],
+      userList: [],
       statusList: [
         { id: '', text: '全部' },
         { id: 1, text: '未完成' },
@@ -97,9 +97,7 @@ export default {
       this.listLoading = true
       listRefund(this.listQuery).then(response => {
         this.list = response.data.data.list
-        this.all = response.data.data.all
         this.total = response.data.data.total
-        this.users = response.data.data.users
         this.listLoading = false
       }).catch(() => {
         this.list = []
@@ -109,8 +107,9 @@ export default {
     },
     getUser() {
       getAllUser().then(response => {
-        console.log(response)
-      }).catch(() => {
+        this.userList = response.data.data
+        this.userList.unshift({ id: '', username: '全部' })
+      }).catch((response) => {
       })
     },
     handleFilter() {
@@ -119,10 +118,29 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['渠道名称', '业务员名称', '商品名称', '商品金额', '商品数量', '退货状态', '退货时间', '完成时间']
-        const filterVal = ['agent_name', 'username', 'product_name', 'price', 'count', 'status', 'create_time', 'receive_time']
-        excel.export_json_to_excel2(tHeader, this.all, filterVal, '退货信息')
+      var requestData = {
+        status: this.listQuery.status,
+        operator_id: this.listQuery.operator_id,
+        date: this.listQuery.date
+      }
+      listRefundExport(requestData).then(response => {
+        var exportList = response.data.data
+        exportList.forEach(element => {
+          if (element.status === 1) {
+            element.status = '未完成'
+          } else if (element.status === 2) {
+            element.status = '已完成'
+          } else if (element.status === 3) {
+            element.status = '已取消'
+          }
+        })
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['渠道名称', '业务员名称', '商品名称', '商品金额', '商品数量', '退货状态', '退货时间', '完成时间']
+          const filterVal = ['agent_name', 'username', 'product_name', 'price', 'count', 'status', 'create_time', 'receive_time']
+          excel.export_json_to_excel2(tHeader, exportList, filterVal, '退货信息')
+          this.downloadLoading = false
+        })
+      }).catch(() => {
         this.downloadLoading = false
       })
     },

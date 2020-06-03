@@ -65,12 +65,11 @@ const user = {
       const phone = userInfo.phone.trim()
       return new Promise((resolve, reject) => {
         verifySmsCode(phone, userInfo.code).then(response => {
-          console.log('resssss', response)
           if (response.data.errno === 0) {
             const token = response.data.data.token
             commit('SET_TOKEN', token)
             setToken(token)
-            resolve()
+            resolve(response)
           } else {
             reject(response.data.data.errmsg)
           }

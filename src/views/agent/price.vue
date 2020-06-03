@@ -15,6 +15,12 @@
 
       <el-table-column align="center" label="特价" prop="current_price"/>
 
+      <el-table-column align="center" label="状态" prop="status">
+        <template slot-scope="scope">
+          {{ scope.row.status | orderStatusFilter }}
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="操作" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="info" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
@@ -87,10 +93,19 @@
 import { listPrice, createPrice, updatePrice, deletePrice } from '@/api/agent'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import { getToken } from '@/utils/auth'
-
+const statusMap = {
+  1: '待审核',
+  2: '审核通过',
+  3: '审核驳回'
+}
 export default {
   name: 'Price',
   components: { Pagination },
+  filters: {
+    orderStatusFilter(status) {
+      return statusMap[status]
+    }
+  },
   data() {
     return {
       list: [],
@@ -146,7 +161,6 @@ export default {
         return
       }
       const agent_id = this.$route.query.id
-      console.log('agentid', agent_id)
       this.listQuery.agent_id = agent_id
       this.dataForm.agent_id = agent_id
       this.listLoading = true
