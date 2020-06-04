@@ -23,7 +23,7 @@
 
       <el-table-column align="center" label="操作" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+          <!-- <el-button type="info" size="mini" @click="handleUpdate(scope.row)">编辑</el-button> -->
           <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
