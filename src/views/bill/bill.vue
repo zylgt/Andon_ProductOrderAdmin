@@ -20,19 +20,19 @@
       <el-table-column align="center" min-width="100" label="渠道名称" prop="agent_name"/>
       <el-table-column align="center" label="业务员名称" prop="username"/>
       <el-table-column align="center" label="商品名称" prop="product_name"/>
-      <el-table-column align="center" label="商品金额" prop="price"/>
+      <el-table-column align="center" label="商品单价" prop="price"/>
       <el-table-column align="center" label="商品数量" prop="count"/>
-      <el-table-column align="center" label="日期" prop="create_time"/>
-      <el-table-column align="center" label="类型" prop="style">
-        <template slot-scope="scope">
-          {{ scope.row.style | orderStatusFilter }}
-        </template>
-      </el-table-column>
       <el-table-column align="center" label="总金额" prop="total_price">
         <template slot-scope="scope">
           {{ scope.row.price*scope.row.count }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="类型" prop="style">
+        <template slot-scope="scope">
+          {{ scope.row.style | orderStatusFilter }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="日期" prop="create_time"/>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
@@ -46,6 +46,7 @@ import { getAllUser } from '@/api/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import checkPermission from '@/utils/permission' // 权限判断函数
 import { nowDate } from '@/utils/getDate'
+import { nowTime } from '@/utils/getDate'
 
 const statusMap = {
   1: '出库',
@@ -66,7 +67,7 @@ export default {
       all: [],
       userList: [],
       statusList: [
-        { id: '', text: '全部' },
+        { id: 0, text: '全部' },
         { id: 1, text: '出库' },
         { id: 2, text: '入库' }
       ],
@@ -113,7 +114,7 @@ export default {
     getUser() {
       getAllUser().then(response => {
         this.userList = response.data.data
-        this.userList.unshift({ id: '', username: '全部' })
+        this.userList.unshift({ id: 0, username: '全部' })
       }).catch((response) => {
       })
     },
@@ -140,9 +141,10 @@ export default {
           }
         })
         import('@/vendor/Export2Excel').then(excel => {
+          const fileName = '出入库台账' + nowTime()
           const tHeader = ['渠道名称', '业务员名称', '商品名称', '商品金额', '商品数量', '日期', '类型', '总金额']
           const filterVal = ['agent_name', 'username', 'product_name', 'price', 'count', 'create_time', 'style', 'allMoney']
-          excel.export_json_to_excel2(tHeader, exportList, filterVal, '出入库台账')
+          excel.export_json_to_excel2(tHeader, exportList, filterVal, fileName)
           this.downloadLoading = false
         })
       }).catch(() => {

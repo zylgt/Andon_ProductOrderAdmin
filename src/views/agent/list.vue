@@ -3,6 +3,11 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
+      <el-input v-model="listQuery.name" clearable class="filter-item" style="width: 200px;" placeholder="请输入渠道名称"/>
+      <el-select v-permission="['POST /admin/order/selectuser']" v-model="listQuery.userid" style="width: 200px" class="filter-item" placeholder="请选择业务员">
+        <el-option v-for="item in userLists" :key="item.id" :label="item.username" :value="item.id"/>
+      </el-select>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
       <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
       <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button>
     </div>
@@ -10,12 +15,11 @@
     <!-- 查询结果 -->
     <el-table v-loading="listLoading" :data="list" element-loading-text="正在查询中。。。" border fit highlight-current-row>
 
-      <el-table-column align="center" label="渠道ID" prop="id" sortable/>
-
-      <el-table-column align="center" label="渠道名称" prop="name"/>
+      <!-- <el-table-column align="center" label="渠道ID" prop="id" sortable/> -->
 
       <el-table-column align="center" label="渠道编号" prop="NO"/>
-      <el-table-column align="center" label="业务员名称" prop="NO"/>
+      <el-table-column align="center" label="渠道名称" prop="name"/>
+      <el-table-column align="center" label="业务员名称" prop="username"/>
       <el-table-column align="center" label="收货人姓名" prop="receiver_name"/>
       <el-table-column align="center" label="收货人电话" prop="receiver_mobile"/>
       <el-table-column align="center" label="地址" prop="receiver_address"/>
@@ -117,12 +121,14 @@ export default {
       list: [],
       all: [],
       userList: [],
+      userLists: [{ id: 0, username: '全部' }],
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 20,
-        name: undefined,
+        name: '',
+        userid: '',
         NO: undefined,
         token: getToken(),
         sort: 'add_time',
@@ -193,6 +199,7 @@ export default {
     getUser() {
       getAllUser().then(response => {
         this.userList = response.data.data
+        this.userLists = this.userLists.concat(response.data.data)
       }).catch((response) => {
       })
     },

@@ -22,7 +22,7 @@
       <el-table-column align="center" label="业务员名称" prop="username"/>
 
       <el-table-column align="center" label="商品名称" prop="product_name"/>
-      <el-table-column align="center" label="商品金额" prop="price"/>
+      <el-table-column align="center" label="商品单价" prop="price"/>
       <el-table-column align="center" label="商品数量" prop="count"/>
 
       <el-table-column align="center" label="退货状态" prop="status">
@@ -44,6 +44,7 @@ import { listRefund, listRefundExport } from '@/api/orderFlow'
 import { getAllUser } from '@/api/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import checkPermission from '@/utils/permission' // 权限判断函数
+import { nowTime } from '@/utils/getDate'
 // eslint-disable-next-line no-unused-vars
 import { getToken } from '@/utils/auth'
 
@@ -67,7 +68,7 @@ export default {
       all: [],
       userList: [],
       statusList: [
-        { id: '', text: '全部' },
+        { id: 0, text: '全部' },
         { id: 1, text: '未完成' },
         { id: 2, text: '已完成' },
         { id: 3, text: '已取消' }
@@ -95,7 +96,8 @@ export default {
     checkPermission,
     getList() {
       this.listLoading = true
-      listRefund(this.listQuery).then(response => {
+      var listQuery = this.listQuery
+      listRefund(listQuery).then(response => {
         this.list = response.data.data.list
         this.total = response.data.data.total
         this.listLoading = false
@@ -108,7 +110,7 @@ export default {
     getUser() {
       getAllUser().then(response => {
         this.userList = response.data.data
-        this.userList.unshift({ id: '', username: '全部' })
+        this.userList.unshift({ id: 0, username: '全部' })
       }).catch((response) => {
       })
     },
@@ -135,9 +137,10 @@ export default {
           }
         })
         import('@/vendor/Export2Excel').then(excel => {
+          const fileName = '退货信息' + nowTime()
           const tHeader = ['渠道名称', '业务员名称', '商品名称', '商品金额', '商品数量', '退货状态', '退货时间', '完成时间']
           const filterVal = ['agent_name', 'username', 'product_name', 'price', 'count', 'status', 'create_time', 'receive_time']
-          excel.export_json_to_excel2(tHeader, exportList, filterVal, '退货信息')
+          excel.export_json_to_excel2(tHeader, exportList, filterVal, fileName)
           this.downloadLoading = false
         })
       }).catch(() => {

@@ -254,7 +254,7 @@ export default {
         name: undefined,
         status: '',
         orderStatusArray: [],
-        user: [],
+        user: '',
         token: getToken(),
         sort: 'add_time',
         order: 'desc'
