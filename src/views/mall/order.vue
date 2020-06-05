@@ -228,7 +228,7 @@ export default {
       all: [],
       users: [],
       statusList: [
-        { id: '', text: '全部' },
+        { id: 0, text: '全部' },
         { id: 1, text: '待审核' },
         { id: 2, text: '待发货' },
         { id: 3, text: '待收货' },
@@ -292,7 +292,16 @@ export default {
     checkPermission,
     getList() {
       this.listLoading = true
+      var listQuerys = this.listQuery
+      if (listQuerys.status === 0) {
+        listQuerys.status = ''
+      }
+      if (listQuerys.user === 0) {
+        listQuerys.user = ''
+      }
+      listQuerys.status
       listOrder(this.listQuery).then(response => {
+        response.data.data.users[0].id = 0
         this.list = response.data.data.list
         this.all = response.data.data.all
         this.total = response.data.data.total

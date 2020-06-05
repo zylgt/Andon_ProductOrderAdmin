@@ -130,7 +130,7 @@ export default {
         name: '',
         userid: '',
         NO: undefined,
-        token: getToken(),
+        token: '',
         sort: 'add_time',
         order: 'desc'
       },
@@ -138,7 +138,7 @@ export default {
         id: undefined,
         name: undefined,
         NO: undefined,
-        token: getToken()
+        token: ''
       },
       dialogFormVisible: false,
       textTips: '提示',
@@ -212,7 +212,7 @@ export default {
         id: undefined,
         name: undefined,
         NO: undefined,
-        token: getToken()
+        token: ''
       }
     },
     handleCreate() {
