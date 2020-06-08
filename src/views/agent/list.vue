@@ -341,6 +341,7 @@ export default {
         const tHeader = [
           '渠道名称',
           '渠道编号',
+          '业务员名称',
           '收货人姓名',
           '收货人电话',
           '收货人地址'
@@ -348,6 +349,7 @@ export default {
         const filterVal = [
           'name',
           'NO',
+          'username',
           'receiver_name',
           'receiver_mobile',
           'receiver_address'
