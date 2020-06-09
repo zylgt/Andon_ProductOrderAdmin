@@ -11,9 +11,9 @@
 
       <el-table-column align="center" label="商品名称" prop="name"/>
 
-      <el-table-column align="center" label="原价" prop="original_price"/>
+      <el-table-column align="center" label="市场价格" prop="original_price"/>
 
-      <el-table-column align="center" label="特价" prop="current_price"/>
+      <el-table-column align="center" label="渠道价格" prop="current_price"/>
 
       <el-table-column align="center" label="状态" prop="status">
         <template slot-scope="scope">
@@ -39,10 +39,10 @@
             <el-option v-for="item in curproducts" :key="item.id" :label="item.name" :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="原价" prop="original_price">
+        <el-form-item label="市场价格" prop="original_price">
           <el-input v-model="dataForm.original_price" :disabled="true"/>
         </el-form-item>
-        <el-form-item label="特价" prop="current_price">
+        <el-form-item label="渠道价格" prop="current_price">
           <el-input-number v-model="dataForm.current_price" :min="0" placeholder="0.00"/>
         </el-form-item>
       </el-form>
@@ -143,7 +143,7 @@ export default {
       },
       rules: {
         current_price: [
-          { required: true, message: '特价不能为空', trigger: 'blur' }
+          { required: true, message: '渠道价格不能为空', trigger: 'blur' }
         ],
         product_id: [
           { required: true, message: '商品不能为空', trigger: 'blur' }

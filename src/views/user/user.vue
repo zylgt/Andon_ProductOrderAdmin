@@ -313,10 +313,22 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
+      var list = this.list
+      list.forEach(element => {
+        if (element.role === 1) {
+          element.role = '超级管理员'
+        } else if (element.role === 2) {
+          element.role = '仓库管理员'
+        } else if (element.role === 3) {
+          element.role = '业务员'
+        } else if (element.role === 4) {
+          element.role = '业务管理员'
+        }
+      })
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['用户名', '手机号码', '性别', '生日', '状态']
-        const filterVal = ['username', 'mobile', 'gender', 'birthday', 'is_active']
-        excel.export_json_to_excel2(tHeader, this.list, filterVal, '用户信息')
+        const tHeader = ['用户名', '手机号码', '角色', '代理商号']
+        const filterVal = ['username', 'mobile', 'role', 'agent_no']
+        excel.export_json_to_excel2(tHeader, list, filterVal, '用户信息')
         this.downloadLoading = false
       })
     }

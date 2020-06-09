@@ -15,7 +15,7 @@
             <el-option v-for="item in product_types" :key="item.id" :label="item.text" :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="当前价格" prop="price">
+        <el-form-item label="市场价格" prop="price">
           <el-input-number v-model="goods.price" :min="0" :max="10000" placeholder="0.00">
             <template slot="append">元</template>
           </el-input-number>

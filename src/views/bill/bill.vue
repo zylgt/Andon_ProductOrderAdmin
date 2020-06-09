@@ -20,7 +20,7 @@
       <el-table-column align="center" min-width="100" label="渠道名称" prop="agent_name"/>
       <el-table-column align="center" label="业务员名称" prop="username"/>
       <el-table-column align="center" label="商品名称" prop="product_name"/>
-      <el-table-column align="center" label="商品单价" prop="price"/>
+      <el-table-column align="center" label="渠道价格" prop="price"/>
       <el-table-column align="center" label="商品数量" prop="count"/>
       <el-table-column align="center" label="总金额" prop="total_price">
         <template slot-scope="scope">

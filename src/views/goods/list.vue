@@ -55,7 +55,7 @@
           <el-button type="primary" size="mini" @click="showDetail(scope.row.detail)">查看</el-button>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" label="当前价格" prop="price"/>
+      <el-table-column align="center" label="市场价格" prop="price"/>
       <el-table-column align="center" label="库存" prop="stock"/>
       <el-table-column align="center" label="描述" prop="description"/>
       <!-- <el-table-column align="center" label="是否新品" prop="isNew">
@@ -206,7 +206,7 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['商品ID', '商品编号', '名称', '当前价格', '是否新品', '是否热品', '是否在售', '首页主图', '宣传图片列表', '商品介绍', '详细介绍', '商品图片', '类目ID']
+        const tHeader = ['商品ID', '商品编号', '名称', '市场价格', '是否新品', '是否热品', '是否在售', '首页主图', '宣传图片列表', '商品介绍', '详细介绍', '商品图片', '类目ID']
         const filterVal = ['id', 'goodsSn', 'name', 'price', 'isNew', 'isHot', 'isOnSale', 'listPicUrl', 'gallery', 'brief', 'detail', 'picUrl', 'categoryId']
         excel.export_json_to_excel2(tHeader, this.list, filterVal, '商品信息')
         this.downloadLoading = false
