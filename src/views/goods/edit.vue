@@ -21,13 +21,13 @@
           </el-input-number>
         </el-form-item>
         <el-form-item label="库存" prop="stock">
-          <el-input-number v-model="goods.stock" :min="0" placeholder="0"/>
+          <el-input-number v-model="goods.stock" :min="0" placeholder="0" disabled="disabled" />
         </el-form-item>
         <el-form-item label="商品批号" prop="lot_number">
-          <el-input v-model.trim="goods.lot_number" oninput="if(value.length>15)value=value.slice(0,15)"/>
+          <el-input v-model.trim="goods.lot_number" oninput="if(value.length>15)value=value.slice(0,15)" disabled="disabled" />
         </el-form-item>
         <el-form-item label="生产日期" prop="product_time">
-          <el-date-picker v-model="goods.product_time" value-format="yyyy-MM-dd" placeholder="选择日期" type="date"/>
+          <el-date-picker v-model="goods.product_time" value-format="yyyy-MM-dd" placeholder="选择日期" type="date" disabled="disabled" />
         </el-form-item>
         <el-form-item label="规格" prop="spec">
           <el-input v-model.trim="goods.spec" oninput="if(value.length>15)value=value.slice(0,15)"/>

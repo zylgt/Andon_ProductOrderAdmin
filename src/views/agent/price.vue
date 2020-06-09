@@ -230,11 +230,18 @@ export default {
               // this.list.unshift(response.data.data)
               this.dialogFormVisible = false
               // location.reload()
-              this.$notify.success({
-                title: '成功',
-                message: '创建成功'
-              })
-              this.getList()
+              if (response.data.message === 100) {
+                this.$notify.success({
+                  title: '成功',
+                  message: '创建成功'
+                })
+                this.getList()
+              } else {
+                this.$notify.warning({
+                  title: '失败',
+                  message: response.data.data
+                })
+              }
             })
             .catch(response => {
               this.$notify.error({
