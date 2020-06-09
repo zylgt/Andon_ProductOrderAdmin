@@ -39,7 +39,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="业务员名称" prop="name">
-          <el-select v-permission="['POST /admin/order/selectuser']" v-model.trim="dataForm.token" class="filter-item" placeholder="请选择业务员">
+          <el-select v-permission="['POST /admin/order/selectuser']" v-model.trim="dataForm.user_id" class="filter-item" placeholder="请选择业务员">
             <el-option v-for="item in userList" :key="item.id" :label="item.username" :value="item.id"/>
           </el-select>
         </el-form-item>
@@ -126,19 +126,18 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         name: '',
-        userid: '',
-        NO: undefined,
-        token: '',
-        sort: 'add_time',
-        order: 'desc'
+        userid: ''
+        // NO: undefined,
+        // token: '',
+        // sort: 'add_time',
+        // order: 'desc'
       },
       dataForm: {
-        id: undefined,
         name: undefined,
         NO: undefined,
-        token: ''
+        user_id: ''
       },
       dialogFormVisible: false,
       textTips: '提示',

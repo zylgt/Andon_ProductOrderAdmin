@@ -23,9 +23,9 @@
           <el-tag >{{ genderDic[scope.row.gender] }}</el-tag>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" label="收货人姓名" prop="receiver_name"/>
+      <!-- <el-table-column align="center" label="收货人姓名" prop="receiver_name"/>
       <el-table-column align="center" label="收货人电话" prop="receiver_mobile"/>
-      <el-table-column align="center" label="地址" prop="address"/>
+      <el-table-column align="center" label="地址" prop="address"/> -->
       <el-table-column align="center" label="代理商号" prop="agent_no"/>
       <el-table-column align="center" label="用户角色" prop="role">
         <template slot-scope="scope">
@@ -56,9 +56,9 @@
         <el-form-item label="用户名" prop="username">
           <el-input v-model.trim="dataForm.username"/>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <!-- <el-form-item label="密码" prop="password">
           <el-input v-model.trim="dataForm.password" type="password" auto-complete="off"/>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="角色" prop="role">
           <el-select v-model="dataForm.role" multiple placeholder="请选择">
             <el-option
@@ -76,7 +76,7 @@
         <el-form-item label="联系电话" prop="mobile">
           <el-input v-model="dataForm.mobile"/>
         </el-form-item>
-        <el-form-item label="收货人姓名" prop="receiver_name">
+        <!-- <el-form-item label="收货人姓名" prop="receiver_name">
           <el-input v-model="dataForm.receiver_name"/>
         </el-form-item>
         <el-form-item label="收货人电话" prop="receiver_mobile">
@@ -84,7 +84,7 @@
         </el-form-item>
         <el-form-item label="收货地址" prop="address">
           <el-input v-model="dataForm.address"/>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="代理商号" prop="agent_no">
           <el-input v-model="dataForm.agent_no"/>
         </el-form-item>

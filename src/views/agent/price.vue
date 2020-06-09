@@ -229,11 +229,12 @@ export default {
               // console.log(response.data.data)
               // this.list.unshift(response.data.data)
               this.dialogFormVisible = false
-              location.reload()
+              // location.reload()
               this.$notify.success({
                 title: '成功',
                 message: '创建成功'
               })
+              this.getList()
             })
             .catch(response => {
               this.$notify.error({
