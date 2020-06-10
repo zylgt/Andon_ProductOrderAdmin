@@ -130,7 +130,8 @@ export default {
         product_id: undefined,
         agent_id: undefined,
         original_price: undefined,
-        current_price: undefined
+        current_price: undefined,
+        token: getToken()
       },
       dialogFormVisible: false,
       textTips: '提示',
