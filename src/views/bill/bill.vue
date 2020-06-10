@@ -5,6 +5,7 @@
     <div class="filter-container">
       <el-date-picker v-model="listQuery.start_date" value-format="yyyy-MM-dd" type="date" class="filter-item" placeholder="开始日期" style="width: 200px;" />
       <el-date-picker v-model="listQuery.end_date" value-format="yyyy-MM-dd" type="date" class="filter-item" placeholder="截止日期" style="width: 200px;" />
+      <el-input v-model="listQuery.agent_name" clearable class="filter-item" style="width: 200px;" placeholder="请输入渠道名称"/>
       <el-select v-model="listQuery.style" style="width: 200px" class="filter-item" placeholder="请选择状态">
         <el-option v-for="item in statusList" :key="item.id" :label="item.text" :value="item.id"/>
       </el-select>
@@ -49,8 +50,8 @@ import { nowDate } from '@/utils/getDate'
 import { nowTime } from '@/utils/getDate'
 
 const statusMap = {
-  1: '出库',
-  2: '入库'
+  1: '售出',
+  2: '退货'
 }
 
 export default {
@@ -68,8 +69,8 @@ export default {
       userList: [],
       statusList: [
         { id: 0, text: '全部' },
-        { id: 1, text: '出库' },
-        { id: 2, text: '入库' }
+        { id: 1, text: '售出' },
+        { id: 2, text: '退货' }
       ],
       total: 0,
       listLoading: true,
@@ -79,7 +80,8 @@ export default {
         user_id: '',
         style: '',
         start_date: '',
-        end_date: ''
+        end_date: '',
+        agent_name: ''
       },
       statusMap,
       orderDialogVisible: false,
@@ -135,9 +137,9 @@ export default {
         exportList.forEach(element => {
           element.allMoney = element.price * element.count
           if (element.style === 1) {
-            element.style = '出库'
+            element.style = '售出'
           } else if (element.style === 2) {
-            element.style = '入库'
+            element.style = '退货'
           }
         })
         import('@/vendor/Export2Excel').then(excel => {

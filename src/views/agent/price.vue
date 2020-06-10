@@ -227,15 +227,17 @@ export default {
           createPrice(this.dataForm)
             .then(response => {
               // console.log(response.data.data)
-              // this.list.unshift(response.data.data)
               this.dialogFormVisible = false
               // location.reload()
-              if (response.data.message === 100) {
+              // eslint-disable-next-line eqeqeq
+              if (response.data.message == 100) {
                 this.$notify.success({
                   title: '成功',
                   message: '创建成功'
                 })
-                this.getList()
+                response.data.data.status = 1
+                this.list.unshift(response.data.data)
+                // this.getList()
               } else {
                 this.$notify.warning({
                   title: '失败',
@@ -319,9 +321,9 @@ export default {
             title: '成功',
             message: '删除成功'
           })
-          location.reload()
-          // const index = this.list.indexOf(row)
-          // this.list.splice(index, 1)
+
+          const index = this.list.indexOf(row)
+          this.list.splice(index, 1)
           this.dialogDeleteVisible = false
         })
         .catch(response => {

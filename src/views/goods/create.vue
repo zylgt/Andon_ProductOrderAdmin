@@ -214,7 +214,7 @@ export default {
       newKeyword: '',
       keywords: [],
       product_types: [],
-      goods: { picUrl: '' },
+      goods: { picUrl: '', stock: 0 },
       specVisiable: false,
       specForm: { specification: '', value: '', picUrl: '' },
       multipleSpec: false,
