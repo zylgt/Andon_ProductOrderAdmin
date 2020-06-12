@@ -38,7 +38,7 @@
     <!-- 添加或修改对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="业务员名称" prop="name">
+        <el-form-item label="业务员名称" prop="user_id">
           <el-select v-permission="['POST /admin/order/selectuser']" v-model.trim="dataForm.user_id" class="filter-item" placeholder="请选择业务员">
             <el-option v-for="item in userList" :key="item.id" :label="item.username" :value="item.id"/>
           </el-select>
@@ -149,6 +149,9 @@ export default {
         create: '创建'
       },
       rules: {
+        user_id: [
+          { required: true, message: '业务员名称不能为空', trigger: 'blur' }
+        ],
         name: [
           { required: true, message: '渠道名称不能为空', trigger: 'blur' }
         ],
