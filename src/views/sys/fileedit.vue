@@ -34,18 +34,20 @@
         <el-form-item label="文件">
           <el-upload
             :action="uploadPath"
-            :show-file-list="true"
+            :show-file-list="false"
             :auto-upload="false"
             :on-remove="onRemoveUpload"
             :on-change="onUploadChange"
-            :limit="1"
             :on-exceed="handleExceed"
-            :file-list="fileList"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif,.pdf"
             list-type="picture-card">
-            <img v-if="picUrl" :src="picUrl" width="100" height="100" class="avatar">
+            <img v-if="picUrl" :src="picUrl" width="148" height="148" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
+            <div v-loading="Loadings" class="loadings" />
+            <div v-if="picUrl" class="successUp">
+              <i class="el-icon-check" />
+            </div>
           </el-upload>
         </el-form-item>
         <el-form-item label="说明" prop="description">
@@ -53,7 +55,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button @click="dialogFormVisible = false, picUrl = ''">取消</el-button>
         <el-button v-if="dialogStatus=='create'" :disabled="createBtnDisabled" type="primary" @click="createData">确定</el-button>
         <el-button v-else :disabled="updateBtnDisabled" type="primary" @click="updateData">确定</el-button>
       </div>
@@ -77,6 +79,37 @@
 
   </div>
 </template>
+<style>
+.el-upload--picture-card{
+  position: relative;
+}
+  .loadings{
+  width:100%;
+  height:100%;
+  position: absolute;
+  left:0;
+  top:0;
+}
+.el-loading-spinner{
+  top:25%;
+}
+.successUp{
+  width:20px;
+  height:20px;
+  position: absolute;
+  right:0;
+  top:0;
+  background:#67C23A;
+  color:#fff;
+}
+.el-upload--picture-card .el-icon-check{
+  color:#fff;
+  font-size:20px;
+  position: absolute;
+  right:0;
+  top:0;
+}
+</style>
 
 <script>
 import { listRole, createRole, updateRole, deleteRole, updatePermission } from '@/api/role'
@@ -91,6 +124,7 @@ export default {
       uploadPath,
       list: null,
       total: 0,
+      Loadings: false,
       fileCount: 0,
       uploadPic: [],
       fileList: [],
@@ -173,10 +207,16 @@ export default {
       const formData = new FormData()
       formData.append(name, file)
       createStorage(formData).then(res => {
-        console.log('res.data.data.url', res.data.data.url)
         this.dataForm.urlList.push(res.data.data.url)
+        this.picUrl = res.data.data.url
         this.fileList.push({ name: '', url: res.data.data.url })
+        // eslint-disable-next-line eqeqeq
+        if (file.type == 'application/pdf') {
+          this.picUrl = '../../..//static/tinymce4.7.5/skins/lightgray/img/pdf.png'
+        }
+        this.Loadings = false
       }).catch(() => {
+        this.Loadings = false
         console.log('上传失败，请重新上传')
       })
     },
@@ -188,6 +228,7 @@ export default {
       console.log(this.fileList)
     },
     onUploadChange(file) {
+      this.Loadings = true
       this.uploadFileNow(file.raw, 'img_url')
     },
     handleExceed() {

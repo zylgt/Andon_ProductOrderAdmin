@@ -134,6 +134,14 @@ export default {
           this.loading = true
           this.$store.dispatch('LoginByCode', this.loginForm).then((response) => {
             this.loading = false
+            // eslint-disable-next-line eqeqeq
+            if (response.data.message == 101) {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.data
+              })
+              return
+            }
             if (response.data.data.role === 2 || response.data.data.role === 3) {
               this.$notify.error({
                 title: '失败',
