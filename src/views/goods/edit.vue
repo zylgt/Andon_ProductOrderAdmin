@@ -281,12 +281,29 @@ export default {
       const goodsId = this.$route.query.id
       detailGoods(goodsId).then(response => {
         this.goods = response.data.data.goods
-        this.fileList = [{ name: 'fileList', url: response.data.data.goods.img_url }]
-        this.fileDetailList = [{ name: 'fileDetailList', url: response.data.data.goods.detail_url }]
-        this.filePackageList = [{ name: 'filePackageList', url: response.data.data.goods.package_url }]
-        this.fileCarouselList1 = [{ name: 'fileCarouselList1', url: response.data.data.goods.carousel_url_1 }]
-        this.fileCarouselList2 = [{ name: 'fileCarouselList2', url: response.data.data.goods.carousel_url_2 }]
-        this.fileCarouselList3 = [{ name: 'fileCarouselList3', url: response.data.data.goods.carousel_url_3 }]
+        if (response.data.data.goods.img_url) {
+          this.fileList = [{ name: 'fileList', url: response.data.data.goods.img_url }]
+        }
+        if (response.data.data.goods.detail_url) {
+          this.fileDetailList = [{ name: 'fileDetailList', url: response.data.data.goods.detail_url }]
+        }
+        if (response.data.data.goods.package_url) {
+          this.filePackageList = [{ name: 'filePackageList', url: response.data.data.goods.package_url }]
+        }
+        if (response.data.data.goods.carousel_url_1) {
+          this.fileCarouselList1 = [{ name: 'fileCarouselList1', url: response.data.data.goods.carousel_url_1 }]
+        }
+        if (response.data.data.goods.carousel_url_2) {
+          this.fileCarouselList2 = [{ name: 'fileCarouselList2', url: response.data.data.goods.carousel_url_2 }]
+        }
+        if (response.data.data.goods.carousel_url_3) {
+          this.fileCarouselList3 = [{ name: 'fileCarouselList3', url: response.data.data.goods.carousel_url_3 }]
+        }
+        // this.fileDetailList = [{ name: 'fileDetailList', url: response.data.data.goods.detail_url }]
+        // this.filePackageList = [{ name: 'filePackageList', url: response.data.data.goods.package_url }]
+        // this.fileCarouselList1 = [{ name: 'fileCarouselList1', url: response.data.data.goods.carousel_url_1 }]
+        // this.fileCarouselList2 = [{ name: 'fileCarouselList2', url: response.data.data.goods.carousel_url_2 }]
+        // this.fileCarouselList3 = [{ name: 'fileCarouselList3', url: response.data.data.goods.carousel_url_3 }]
       })
 
       listCatAndBrand().then(response => {

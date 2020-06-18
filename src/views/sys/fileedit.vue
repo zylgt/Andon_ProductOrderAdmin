@@ -212,7 +212,7 @@ export default {
         this.fileList.push({ name: '', url: res.data.data.url })
         // eslint-disable-next-line eqeqeq
         if (file.type == 'application/pdf') {
-          this.picUrl = '../../..//static/tinymce4.7.5/skins/lightgray/img/pdf.png'
+          this.picUrl = 'https://cnbj2.fds.api.xiaomi.com/ajk-image/test/file-img31301592442443.png'
         }
         this.Loadings = false
       }).catch(() => {

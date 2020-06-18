@@ -44,6 +44,7 @@
             :on-remove="onRemoveUpload"
             :on-change="onUploadChange"
             :limit="1"
+            :file-list="fileList"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
@@ -60,6 +61,7 @@
             :on-remove="onDetailRemoveUpload"
             :on-change="onDetailUploadChange"
             :limit="1"
+            :file-list="fileDetailList"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
@@ -76,6 +78,7 @@
             :on-remove="onPackageRemoveUpload"
             :on-change="onPackageUploadChange"
             :limit="1"
+            :file-list="filePackageList"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
@@ -92,6 +95,7 @@
             :on-remove="onCarouselRemoveUpload1"
             :on-change="onCarouselUploadChange1"
             :limit="1"
+            :file-list="fileCarouselList1"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
@@ -108,6 +112,7 @@
             :on-remove="onCarouselRemoveUpload2"
             :on-change="onCarouselUploadChange2"
             :limit="1"
+            :file-list="fileCarouselList2"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
@@ -124,6 +129,7 @@
             :on-remove="onCarouselRemoveUpload3"
             :on-change="onCarouselUploadChange3"
             :limit="1"
+            :file-list="fileCarouselList3"
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif"
             list-type="picture-card">
@@ -223,6 +229,12 @@ export default {
       createDisabled: false,
       attributeForm: { attribute: '', value: '' },
       attributes: [],
+      fileList: [],
+      fileDetailList: [],
+      filePackageList: [],
+      fileCarouselList1: [],
+      fileCarouselList2: [],
+      fileCarouselList3: [],
       rules: {
         goodsSn: [{ required: true, message: '商品编号不能为空', trigger: 'blur' }],
         name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }],
@@ -264,7 +276,24 @@ export default {
       const formData = new FormData()
       formData.append(name, file)
       createStorage(formData).then(res => {
-        console.log('res.data.data.url', res.data.data.url)
+        if (name === 'img_url') {
+          this.fileList = [{ name: 'fileList', url: res.data.data.url }]
+        }
+        if (name === 'detail_url') {
+          this.fileDetailList = [{ name: 'fileDetailList', url: res.data.data.url }]
+        }
+        if (name === 'package_url') {
+          this.filePackageList = [{ name: 'filePackageList', url: res.data.data.url }]
+        }
+        if (name === 'carousel_url_1') {
+          this.fileCarouselList1 = [{ name: 'fileCarouselList1', url: res.data.data.url }]
+        }
+        if (name === 'carousel_url_2') {
+          this.fileCarouselList2 = [{ name: 'fileCarouselList2', url: res.data.data.url }]
+        }
+        if (name === 'carousel_url_3') {
+          this.fileCarouselList3 = [{ name: 'fileCarouselList3', url: res.data.data.url }]
+        }
         this.goods[name] = res.data.data.url
       }).catch(() => {
         console.log('上传失败，请重新上传')
