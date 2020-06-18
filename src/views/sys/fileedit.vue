@@ -31,7 +31,7 @@
         <el-form-item label="文件名称" prop="name">
           <el-input v-model.trim="dataForm.name"/>
         </el-form-item>
-        <el-form-item label="文件">
+        <el-form-item label="文件" prop="picUrl">
           <el-upload
             :action="uploadPath"
             :show-file-list="false"
@@ -42,7 +42,7 @@
             class="avatar-uploader"
             accept=".jpg,.jpeg,.png,.gif,.pdf"
             list-type="picture-card">
-            <img v-if="picUrl" :src="picUrl" width="148" height="148" class="avatar">
+            <img v-if="picUrl" :src="dataForm.picUrl" width="148" height="148" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
             <div v-loading="Loadings" class="loadings" />
             <div v-if="picUrl" class="successUp">
@@ -141,6 +141,7 @@ export default {
       dataForm: {
         id: undefined,
         product_id: '',
+        picUrl: '',
         urlList: [],
         name: undefined,
         description: undefined
@@ -162,6 +163,9 @@ export default {
       rules: {
         name: [
           { required: true, message: '文件名称不能为空', trigger: 'blur' }
+        ],
+        picUrl: [
+          { required: true, message: '文件不能为空', trigger: 'blur' }
         ]
       },
       permissionDialogFormVisible: false,
@@ -207,16 +211,22 @@ export default {
       const formData = new FormData()
       formData.append(name, file)
       createStorage(formData).then(res => {
+        this.dataForm.picUrl = res.data.data.url
         this.dataForm.urlList.push(res.data.data.url)
         this.picUrl = res.data.data.url
         this.fileList.push({ name: '', url: res.data.data.url })
         // eslint-disable-next-line eqeqeq
         if (file.type == 'application/pdf') {
-          this.picUrl = 'https://cnbj2.fds.api.xiaomi.com/ajk-image/test/file-img31301592442443.png'
+          this.dataForm.picUrl = 'https://cnbj2.fds.api.xiaomi.com/ajk-image/test/file-img31301592442443.png'
         }
+        var that = this
         this.Loadings = false
+        setTimeout(function() {
+          that.createBtnDisabled = false
+        }, 500)
       }).catch(() => {
         this.Loadings = false
+        this.createBtnDisabled = false
         console.log('上传失败，请重新上传')
       })
     },
@@ -229,6 +239,7 @@ export default {
     },
     onUploadChange(file) {
       this.Loadings = true
+      this.createBtnDisabled = 'disabled'
       this.uploadFileNow(file.raw, 'img_url')
     },
     handleExceed() {
@@ -262,7 +273,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.createBtnDisabled = true
+          this.createBtnDisabled = 'disabled'
           // const formData = new FormData()
           // Object.keys(this.dataForm).forEach((key) => {
           //   formData.append(key, this.dataForm[key])
